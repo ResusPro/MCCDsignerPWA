@@ -1,0 +1,9 @@
+MCCDSigner PWA v0.1 uses:
+
+PDF.js — Apache License 2.0
+https://mozilla.github.io/pdf.js/
+
+pdf-lib — MIT License
+https://pdf-lib.js.org/
+
+Full licence texts are included in the parent bundle's THIRD_PARTY_LICENSES folder.
