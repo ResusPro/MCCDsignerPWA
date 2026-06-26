@@ -1,4 +1,4 @@
-MCCDSigner PWA v0.2 uses:
+MCCDSigner PWA v0.2a uses:
 - Mozilla PDF.js
 - pdf-lib
 - Tesseract.js

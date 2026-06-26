@@ -1,17 +1,7 @@
-MCCDSigner PWA v0.2 — GitHub Pages update
+MCCDSigner PWA v0.2a — GitHub update
 
-1. Open this DEPLOY folder.
-2. Select every file and folder inside it.
-3. Drag them into the GitHub repository upload page.
-4. Commit the changes.
+Upload the CONTENTS of this DEPLOY folder to the root of the existing GitHub repository.
+Replace the existing files when prompted and commit the changes.
 
-Upload the CONTENTS of DEPLOY, not the DEPLOY folder itself.
-The repository root should contain index.html, sw.js, assets, icons, ocr and samples.
-
-After GitHub Pages finishes deploying:
-- close the installed MCCDSigner PWA completely;
-- reopen it while online;
-- check the heading says v0.2;
-- load the supplied synthetic PDF first.
-
-The first v0.2 load may take longer because about 42 MB of local OCR files are cached for offline use.
+The service-worker cache name has changed, so the installed PWA should update after GitHub Pages redeploys.
+Close the PWA completely, reopen it while online, and confirm the header says v0.2a.
