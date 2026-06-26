@@ -1,7 +1,7 @@
 {
-  "name": "MCCDSigner PWA Prototype",
+  "name": "MCCDSigner PWA v0.2 Prototype",
   "short_name": "MCCDSigner",
-  "description": "Local-only manual MCCD stamping prototype.",
+  "description": "Local-only Pattern T OCR MCCD stamping prototype.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
