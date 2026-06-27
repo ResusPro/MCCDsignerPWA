@@ -1,0 +1,21 @@
+{
+  "name": "mccdsigner-pwa-v0-2a",
+  "private": true,
+  "version": "0.2.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "npm run prepare:ocr && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "prepare:ocr": "node scripts/copy-ocr-assets.mjs"
+  },
+  "dependencies": {
+    "@tesseract.js-data/eng": "^1.0.0",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "6.0.227",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "vite": "8.1.0"
+  }
+}
