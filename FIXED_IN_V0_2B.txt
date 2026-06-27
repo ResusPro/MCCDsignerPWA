@@ -1,0 +1,8 @@
+MCCDSigner PWA v0.2b
+
+This corrects two v0.2a packaging faults:
+1. The JavaScript VERSION constant was accidentally left as 0.2, so the footer/header reported the wrong build.
+2. The application bundle kept the same assets/app.js URL, allowing the previous service worker cache to keep serving the old detector.
+
+v0.2b uses unique app-v0.2b asset filenames and a network-first HTML shell.
+The Pattern T border patch from v0.2a is retained.

@@ -1,4 +1,4 @@
-MCCDSigner PWA v0.2a privacy design
+MCCDSigner PWA v0.2b privacy design
 
 - The selected PDF is read and rendered in the browser.
 - Pattern T OCR runs locally using bundled Tesseract.js and English language data.

@@ -1,7 +1,15 @@
-MCCDSigner PWA v0.2a — GitHub update
+MCCDSigner PWA v0.2b — GitHub update
 
-Upload the CONTENTS of this DEPLOY folder to the root of the existing GitHub repository.
-Replace the existing files when prompted and commit the changes.
+This build fixes the v0.2a deployment/cache packaging error.
 
-The service-worker cache name has changed, so the installed PWA should update after GitHub Pages redeploys.
-Close the PWA completely, reopen it while online, and confirm the header says v0.2a.
+Using GitHub Desktop:
+1. Repository > Show in Explorer.
+2. Copy ALL CONTENTS of this DEPLOY folder into the repository root.
+3. Replace files when prompted.
+4. Commit to main, then Push origin.
+
+The new page must load assets/app-v0.2b.js and assets/app-v0.2b.css.
+Old assets/app.js and assets/app.css may remain in the repository but are no longer used.
+
+After GitHub Pages deploys, open the site in a normal browser tab while online.
+The header and footer must both say v0.2b.
