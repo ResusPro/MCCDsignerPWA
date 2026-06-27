@@ -1,0 +1,4 @@
+MCCDSigner PWA v0.2e
+
+FIX: The confirmation stage now reads individual OCR words rather than relying on Tesseract line grouping.
+The heading alone remains insufficient: identity/declaration and signature/date evidence must appear below it in the correct order.
