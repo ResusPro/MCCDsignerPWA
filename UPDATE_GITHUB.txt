@@ -1,0 +1,7 @@
+MCCDSigner PWA v0.2a — GitHub update
+
+Upload the CONTENTS of this DEPLOY folder to the root of the existing GitHub repository.
+Replace the existing files when prompted and commit the changes.
+
+The service-worker cache name has changed, so the installed PWA should update after GitHub Pages redeploys.
+Close the PWA completely, reopen it while online, and confirm the header says v0.2a.
