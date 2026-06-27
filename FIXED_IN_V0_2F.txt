@@ -1,0 +1,13 @@
+MCCDSigner PWA v0.2f — TEST ONLY
+
+Root cause fixed:
+- v0.2e could recognise the ME heading but its confirmation stage still depended on Tesseract's nested block/line structure for the lower labels.
+- Browser OCR can merge or omit those line objects even when the words themselves are recognised.
+
+v0.2f changes:
+- requests Tesseract TSV output and parses individual word rows directly;
+- recognises compound OCR tokens such as FULLNAME and GMCNUMBER;
+- confirms the heading with lower identity/declaration and Signature/Date evidence in the correct vertical order;
+- discards a dotted Signature/Date rule if it is mistaken for the outer lower border;
+- shows the OCR evidence found in the warning if confirmation still fails;
+- retains manual red-box adjustment and TEST-only output safeguards.

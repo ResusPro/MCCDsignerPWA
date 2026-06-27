@@ -1,8 +1,8 @@
-MCCDSigner PWA v0.2e uses:
+MCCDSigner PWA v0.2f uses:
 - Mozilla PDF.js
 - pdf-lib
 - Tesseract.js
 - tesseract.js-core
 - @tesseract.js-data/eng
 
-Full licence texts are included in the COMPLETE project bundle.
+Full licence texts are included in the COMPLETE project bundle under THIRD_PARTY_LICENSES.
