@@ -1,0 +1,2 @@
+Pattern T confirmation no longer relies on Tesseract grouping Full name, Declaration, Signature and Date into complete OCR lines.
+It now confirms the box from word-level OCR evidence in the correct vertical order, with the lower border used when available.

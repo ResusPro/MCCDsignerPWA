@@ -1,12 +1,9 @@
-MCCDSigner PWA v0.2c — GitHub update
+MCCDSigner PWA v0.2d — GitHub update
 
-1. Extract this ZIP.
-2. Open the extracted folder.
-3. Copy ALL files and folders inside it into the root of the local GitHub repository.
-4. Replace existing files when prompted.
-5. Commit to main and Push origin in GitHub Desktop.
+Copy every file and folder in this directory into the root of the existing GitHub repository.
+Keep the existing CNAME file.
+Commit and push using GitHub Desktop.
 
-Keep the existing CNAME file in the repository root.
-
-After GitHub Pages deploys, open the site online and confirm both the header and footer say v0.2c.
-The application bundle is versioned as assets/app-v0.2c.js, so it cannot silently reuse v0.2b JavaScript.
+The new uniquely named application files are:
+assets/app-v0.2d.js
+assets/app-v0.2d.css
