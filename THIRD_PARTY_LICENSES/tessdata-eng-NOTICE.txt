@@ -1,0 +1,3 @@
+The bundled English traineddata is supplied by @tesseract.js-data/eng 1.0.0.
+Package licence: MIT.
+Repository: naptha/tessdata.

@@ -1,0 +1,10 @@
+MCCDSigner PWA v0.2a detector validation
+
+Expected supplied-sample result:
+- page 2
+- rotation 0 degrees
+- status: Medical Examiner box found
+- badge: Pattern T ✓
+- complete outer ME rectangle selected
+
+The patch changes only bottom-border confirmation. OCR phrase matching, PDF stamping, manual adjustment, review and reject behaviour are unchanged.
