@@ -1,0 +1,9 @@
+MCCDSigner PWA v0.3b
+
+The previous builds were changing box-confirmation logic even though the heading itself had not been positively found. The visible red rectangle was the default manual box.
+
+v0.3b:
+1. Searches embedded PDF text first. This positively identifies the supplied synthetic PDF without relying on OCR.
+2. Retains fully local Tesseract OCR for scanned image PDFs.
+3. Groups OCR words by visual y-position, so incorrect TSV line identifiers do not prevent phrase matching.
+4. Reports useful OCR diagnostics if no heading is found.
