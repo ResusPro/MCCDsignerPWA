@@ -1,11 +1,11 @@
-MCCDSigner PWA v0.2f — GitHub update
+MCCDSigner PWA v0.2g — GitHub update
 
-Copy the CONTENTS of this DEPLOY folder into the ROOT of the existing GitHub repository using GitHub Desktop.
-Replace existing files, but retain the repository's existing CNAME file.
-Commit to main and Push origin.
+Copy the CONTENTS of this DEPLOY package into the root of the existing GitHub
+repository, retaining the existing CNAME file.
 
-The new unique application files are:
-  assets/app-v0.2f.js
-  assets/app-v0.2f.css
+Commit to main and push origin. The uniquely named application files are:
+  assets/app-v0.2g.js
+  assets/app-v0.2g.css
 
-After GitHub Pages deploys, reopen the site online and confirm both header and footer say v0.2f.
+After GitHub Pages deploys, open the site online and confirm the footer says
+MCCDSigner PWA v0.2g before running the supplied synthetic test.
