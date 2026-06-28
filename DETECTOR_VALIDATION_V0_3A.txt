@@ -1,0 +1,19 @@
+MCCDSigner PWA v0.3a detector validation
+
+The new thin-row solid-border algorithm was exercised at the same 2050-pixel OCR render size used by the PWA against:
+
+1. Supplied synthetic form, page 2, 0 degrees
+   Detected box: x=0.0241, y=0.7171, w=0.9510, h=0.2088
+
+2. AP Abdul Sabih MCCD Line 478, page 2, 0 degrees
+   Detected box: x=0.3224, y=0.6710, w=0.6590, h=0.1386
+
+3. AC Alfreda Gormley MCCD Comm, page 2, 0 degrees
+   Detected box: x=0.0263, y=0.7467, w=0.9454, h=0.1981
+
+4. SAH Margaret Llewellyn test output, page 2, 0 degrees
+   Detected box: x=0.1076, y=0.3737, w=0.8490, h=0.0898
+
+All four returned aligned enclosing rectangles around the OCR-confirmed Medical Examiner heading.
+
+This validates the detector logic against rendered pages. A complete browser/PWA run must still be confirmed on the target browser, because this build environment cannot navigate to a locally hosted PWA.

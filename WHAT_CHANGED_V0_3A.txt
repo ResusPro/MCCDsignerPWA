@@ -1,0 +1,18 @@
+MCCDSigner PWA v0.3a
+
+This replaces the browser box-border scanner rather than changing another OCR threshold.
+
+Cause of the repeated v0.2/v0.3 failures:
+- the old scanner inspected a vertical band about 14 pixels deep;
+- that merged printed text and dotted writing lines into false horizontal rules;
+- OCR found the correct ME heading, but the rectangle was then rejected.
+
+v0.3a:
+- scans thin 5-pixel row bands;
+- permits only tiny gaps;
+- requires near-continuous long solid rules;
+- groups the several pixels of each printed border into one rule;
+- confirms aligned top and bottom borders around the OCR heading;
+- shows the actual geometry diagnostic in the visible warning if it still fails.
+
+The sample detector was independently checked against the synthetic form and three substantially different real-layout examples.
