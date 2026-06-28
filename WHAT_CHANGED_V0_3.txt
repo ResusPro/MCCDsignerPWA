@@ -1,0 +1,12 @@
+MCCDSigner PWA v0.3
+
+Detector redesign:
+- Mirrors the proven Windows Pattern T sequence.
+- OCR first confirms the unique heading "For the medical examiner to complete".
+- Image geometry then identifies the enclosing top and bottom borders.
+- Internal labels such as Full name, Declaration, Signature and Date are no longer mandatory for a clear rectangular box.
+- If the enclosing rectangle is not confirmed, the result remains manual/fail-safe.
+- Failure messages now include detector diagnostics.
+
+All documents and OCR remain local to the browser.
+This remains a TEST-ONLY prototype.
