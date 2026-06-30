@@ -1,9 +1,7 @@
-MCCDSigner PWA v0.5.3
+MCCDSigner PWA v0.5.4 — GitHub root deployment
 
 1. Extract this ZIP.
 2. Upload everything INSIDE the extracted folder to the GitHub repository root.
-3. Overwrite all matching files.
-4. Leave the existing GitHub Pages custom-domain setting and CNAME alone.
-5. Test https://mccdsigner.uhded.net/?build=053
-
-This build uses new app/loader/CSS names and new OCR directories, so old cached v0.5.2 assets cannot be reused.
+3. Overwrite matching files when GitHub asks.
+4. Leave the existing CNAME/custom-domain configuration unchanged.
+5. This build intentionally uses a new sample filename and new app asset filenames.

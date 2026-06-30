@@ -1,21 +1,20 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.5.3-static-v1';
+const CACHE_NAME = 'mccdsigner-pwa-v0.5.4-static-v1';
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './privacy.txt',
-  './loader-v0.5.3.js',
-  './app-v0.5.3.js',
-  './app-v0.5.3.css',
-  './pdf.worker.mjs',
+  './assets/app-v0.5.4.js',
+  './assets/app-v0.5.4.css',
+  './assets/pdf.worker.mjs',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './samples/MCCDSigner_PWA_test_form.pdf',
+  './samples/MCCDSigner_PWA_test_form_v0.5.4.pdf',
   './samples/dummy-signature.png',
   './ocr/worker.min.js',
-  './ocr/lang-fast/eng.traineddata.gz',
-  './ocr/core-fast/tesseract-core-lstm.wasm.js',
-  './ocr/core-fast/tesseract-core-lstm.wasm'
+  './ocr/lang/eng.traineddata.gz',
+  './ocr/core/tesseract-core-lstm.wasm.js',
+  './ocr/core/tesseract-core-lstm.wasm'
 ];
 
 self.addEventListener('install', (event) => {
@@ -38,21 +37,24 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  if (
-    request.mode === 'navigate' ||
-    url.pathname.endsWith('/index.html') ||
-    url.pathname === new URL('./', self.location).pathname
-  ) {
+  const isNavigation = request.mode === 'navigate'
+    || url.pathname.endsWith('/index.html')
+    || url.pathname === new URL('./', self.location).pathname;
+  const isVersionedSample = url.pathname.endsWith('/samples/MCCDSigner_PWA_test_form_v0.5.4.pdf');
+
+  // HTML and the regression sample are network-first. This prevents an old
+  // synthetic PDF from surviving a deployment under the same app origin.
+  if (isNavigation || isVersionedSample) {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-store' })
         .then((response) => {
           if (response && response.status === 200) {
             const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', copy));
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
           }
           return response;
         })
-        .catch(() => caches.match('./index.html'))
+        .catch(() => caches.match(request).then((cached) => cached || caches.match('./index.html')))
     );
     return;
   }
