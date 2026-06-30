@@ -1,12 +1,13 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.5-static-v1';
+const CACHE_NAME = 'mccdsigner-pwa-v0.5.1-static-v1';
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './privacy.txt',
-  './assets/app-v0.5.js',
-  './assets/app-v0.5.css',
-  './assets/pdf.worker.mjs',
+  './loader-v0.5.1.js',
+  './app-v0.5.1.js',
+  './app-v0.5.1.css',
+  './pdf.worker.mjs',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './samples/MCCDSigner_PWA_test_form.pdf',
@@ -43,9 +44,11 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Always check the network first for HTML/navigation so a new deployment
-  // cannot be hidden behind an old cached shell. Fall back offline if needed.
-  if (request.mode === 'navigate' || url.pathname.endsWith('/index.html') || url.pathname === new URL('./', self.location).pathname) {
+  if (
+    request.mode === 'navigate' ||
+    url.pathname.endsWith('/index.html') ||
+    url.pathname === new URL('./', self.location).pathname
+  ) {
     event.respondWith(
       fetch(request)
         .then((response) => {
@@ -60,7 +63,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Versioned application assets and large OCR files are safe to serve cache-first.
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
