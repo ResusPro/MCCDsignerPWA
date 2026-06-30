@@ -1,0 +1,3 @@
+MCCDSigner PWA v0.5
+Whole-document orientation, page classification, page-order correction and Pattern T OCR stamping.
+GitHub Pages root deployment build.
