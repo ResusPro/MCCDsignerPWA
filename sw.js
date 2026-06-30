@@ -1,27 +1,21 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.5.2-static-v1';
+const CACHE_NAME = 'mccdsigner-pwa-v0.5.3-static-v1';
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './privacy.txt',
-  './loader-v0.5.2.js',
-  './app-v0.5.2.js',
-  './app-v0.5.2.css',
+  './loader-v0.5.3.js',
+  './app-v0.5.3.js',
+  './app-v0.5.3.css',
   './pdf.worker.mjs',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './samples/MCCDSigner_PWA_test_form.pdf',
   './samples/dummy-signature.png',
   './ocr/worker.min.js',
-  './ocr/lang/eng.traineddata.gz',
-  './ocr/core/tesseract-core.wasm.js',
-  './ocr/core/tesseract-core.wasm',
-  './ocr/core/tesseract-core-simd.wasm.js',
-  './ocr/core/tesseract-core-simd.wasm',
-  './ocr/core/tesseract-core-lstm.wasm.js',
-  './ocr/core/tesseract-core-lstm.wasm',
-  './ocr/core/tesseract-core-simd-lstm.wasm.js',
-  './ocr/core/tesseract-core-simd-lstm.wasm'
+  './ocr/lang-fast/eng.traineddata.gz',
+  './ocr/core-fast/tesseract-core-lstm.wasm.js',
+  './ocr/core-fast/tesseract-core-lstm.wasm'
 ];
 
 self.addEventListener('install', (event) => {

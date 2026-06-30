@@ -1,3 +1,2 @@
-MCCDSigner PWA v0.5.2
-Corrected landscape synthetic MCCD test document.
-The v0.5.1 orientation and page-order engine is unchanged.
+MCCDSigner PWA v0.5.3
+Performance hotfix: embedded-text fast path, compact OCR model, two landscape rotations only, and hard timeouts.
