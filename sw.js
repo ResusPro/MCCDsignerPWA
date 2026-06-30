@@ -1,11 +1,11 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.3b-static-v1';
+const CACHE_NAME = 'mccdsigner-pwa-v0.4-static-v1';
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './privacy.txt',
-  './assets/app-v0.3b.js',
-  './assets/app-v0.3b.css',
+  './assets/app-v0.4.js',
+  './assets/app-v0.4.css',
   './assets/pdf.worker.mjs',
   './icons/icon-192.png',
   './icons/icon-512.png',
