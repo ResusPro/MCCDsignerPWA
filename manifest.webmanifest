@@ -1,5 +1,5 @@
 {
-  "name": "MCCDSigner PWA v0.5.4 Prototype",
+  "name": "MCCDSigner PWA v0.5.5 Prototype",
   "short_name": "MCCDSigner",
   "description": "Local-only MCCD page orientation, ordering and Pattern T OCR stamping prototype.",
   "id": "./",

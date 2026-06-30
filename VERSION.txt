@@ -1,3 +1,3 @@
-MCCDSigner PWA v0.5.4
-Orientation/cache correction build
-Unique landscape regression sample; embedded-text pages use page geometry rather than rotation-blind text scoring.
+MCCDSigner PWA v0.5.5
+Root-level startup asset repair
+Restores the diagnostic loader and v0.5.4 document logic.
