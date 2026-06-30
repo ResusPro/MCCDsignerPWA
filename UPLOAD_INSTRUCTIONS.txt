@@ -1,11 +1,7 @@
-MCCDSigner PWA v0.5.1 HOTFIX
+MCCDSigner PWA v0.5.2
 
 1. Extract this ZIP.
-2. Upload everything INSIDE the extracted folder to the GitHub repository root.
-3. Overwrite index.html, sw.js, manifest.webmanifest and VERSION.txt.
-4. Confirm these files appear at repository root:
-   app-v0.5.1.js
-   app-v0.5.1.css
-   loader-v0.5.1.js
-   pdf.worker.mjs
-5. Do not remove or alter the existing GitHub Pages custom-domain setting/CNAME.
+2. Upload everything inside it to the GitHub repository root.
+3. Overwrite the existing files.
+4. Keep the existing GitHub Pages custom-domain setting/CNAME unchanged.
+5. Test with https://mccdsigner.uhded.net/?build=052
