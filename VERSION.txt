@@ -1,0 +1,3 @@
+MCCDSigner PWA v0.6.0
+Geometry-first orientation and standard-form ME section detection.
+GitHub Pages root deployment build.

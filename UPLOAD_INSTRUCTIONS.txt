@@ -1,0 +1,8 @@
+MCCDSigner PWA v0.6.0
+
+1. Extract this ZIP.
+2. Upload every item INSIDE the extracted folder directly to the GitHub repository root.
+3. Overwrite matching files.
+4. Confirm these root files exist: index.html, loader-v0.6.0.js, app-v0.6.0.js, app-v0.6.0.css, pdf.worker.mjs.
+5. Leave the existing CNAME and GitHub Pages custom-domain setting unchanged.
+6. Old app-v0.5.x files and old assets/samples folders may remain; v0.6.0 does not reference them.
