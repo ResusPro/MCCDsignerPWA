@@ -1,7 +1,0 @@
-MCCDSigner PWA v0.3a — GitHub update
-
-The DEPLOY-ONLY ZIP now contains the website files directly at its root.
-Extract it, select everything inside the extracted folder, and copy it into the local GitHub Desktop repository.
-Keep the existing CNAME file. Choose Replace for duplicates, then Commit to main and Push origin.
-
-Confirm index.html refers to assets/app-v0.3a.js and the website footer says v0.3a before testing.
