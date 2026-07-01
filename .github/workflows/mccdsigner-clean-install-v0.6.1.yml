@@ -1,0 +1,65 @@
+name: MCCDSigner clean install v0.6.1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  clean-install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify clean payload
+        shell: bash
+        run: |
+          echo "7e0e7175e95b144ca0f821511a260b8b15f8d6705db355e403cffba1245cdaec  CLEAN_DEPLOY_PAYLOAD_v0.6.1.zip" | sha256sum --check -
+
+      - name: Replace repository with clean v0.6.1
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf /tmp/mccdsigner-clean
+          mkdir -p /tmp/mccdsigner-clean
+          unzip -q "CLEAN_DEPLOY_PAYLOAD_v0.6.1.zip" -d /tmp/mccdsigner-clean
+
+          test -f /tmp/mccdsigner-clean/index.html
+          test -f /tmp/mccdsigner-clean/app-v0.6.1.js
+          test -f /tmp/mccdsigner-clean/loader-v0.6.1.js
+          test -f /tmp/mccdsigner-clean/batch-test.html
+          test -f /tmp/mccdsigner-clean/sw.js
+          test -f /tmp/mccdsigner-clean/VERSION.txt
+
+          # Preserve the existing GitHub Pages custom-domain file if present.
+          if [ -f CNAME ]; then
+            cp CNAME /tmp/MCCDSigner-CNAME
+          fi
+
+          # Remove every old deployment file while retaining Git history.
+          # The one-time workflow and payload are removed by this step too.
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          cp -a /tmp/mccdsigner-clean/. .
+
+          if [ -f /tmp/MCCDSigner-CNAME ]; then
+            cp /tmp/MCCDSigner-CNAME CNAME
+          fi
+
+          echo "Installed files:"
+          find . -maxdepth 3 -type f ! -path './.git/*' | sort
+
+      - name: Commit clean repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Clean install MCCDSigner PWA v0.6.1"
+          git push origin "HEAD:${{ github.ref_name }}"
