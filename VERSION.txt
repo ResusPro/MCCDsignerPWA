@@ -1,3 +1,2 @@
-MCCDSigner PWA v0.5.5
-Root-level startup asset repair
-Restores the diagnostic loader and v0.5.4 document logic.
+MCCDSigner PWA v0.6.1
+Adds a local browser batch regression harness while retaining v0.6 detection logic.
