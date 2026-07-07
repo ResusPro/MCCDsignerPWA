@@ -1,3 +1,0 @@
-JSZip is included for local reading and writing of regression ZIP files.
-Copyright (c) 2009-2016 Stuart Knightley, David Duponchel, Franz Buchinger, António Afonso.
-Licensed under the MIT License.

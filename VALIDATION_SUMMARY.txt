@@ -1,0 +1,18 @@
+MCCDSigner PWA v0.7.0 local regression summary
+==============================================
+
+Test corpus: 20 supplied two-page MCCD examples (19 unique documents).
+
+Results:
+- Medical Examiner page identified: 20/20
+- Correct page orientation identified: 20/20
+- Reversed page order corrected: 1/1 reversed-order example
+- Medical Examiner box located: 20/20
+
+Detector timing in the local desktop validation harness after OCR worker startup:
+- fastest document: 0.59 seconds
+- median document: 0.85 seconds
+- slowest document: 2.45 seconds
+
+The browser includes an immediate manual fallback and remains a TEST ONLY prototype.
+No patient PDFs are included in this deployment package.

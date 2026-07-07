@@ -1,7 +1,7 @@
-MCCDSigner PWA v0.5 privacy design
+MCCDSigner PWA v0.7.0 privacy design
 
 - The selected PDF is read and rendered in the browser.
-- Pattern T OCR runs locally using bundled Tesseract.js and English language data.
+- Fast Pattern T OCR runs locally using bundled Tesseract.js and English language data.
 - The app does not upload the PDF, signature or recognised text.
 - The app contains no analytics or telemetry.
 - A signed TEST PDF is created only after the user presses Generate review PDF.

@@ -1,7 +1,15 @@
-MCCDSigner PWA v0.6.1 WITH BATCH REGRESSION TEST
+MCCDSigner PWA v0.7.0 deployment
+================================
 
-1. Extract this ZIP.
-2. Upload everything inside it to the GitHub repository root and overwrite matching files.
-3. Leave CNAME/custom-domain settings unchanged.
-4. Open /batch-test.html, select the 20-PDF regression ZIP once, and press Run all selected tests.
-5. The PDFs remain local in the browser. Do not upload the regression pack or result ZIP to GitHub.
+This is the clean GitHub Pages deployment set.
+
+The repository root must contain index.html, sw.js, VERSION.txt and the folders
+assets, icons, ocr, pdfjs-wasm and samples.
+
+Do not upload any real MCCD regression PDFs to GitHub.
+Preserve the repository's existing CNAME/custom-domain configuration.
+
+After deployment, verify:
+https://mccdsigner.uhded.net/VERSION.txt
+
+It should begin: MCCDSigner PWA v0.7.0

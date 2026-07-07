@@ -1,0 +1,11 @@
+MCCDSigner PWA v0.7.0 — third-party components
+==============================================
+
+This application bundles open-source components including:
+- PDF.js (Mozilla), Apache License 2.0
+- pdf-lib, MIT License
+- Tesseract.js, Apache License 2.0
+- Tesseract OCR English language data
+
+Refer to the corresponding upstream projects and package metadata in the source
+archive for complete licence texts and attribution details.
