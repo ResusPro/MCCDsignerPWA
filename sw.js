@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.7.0-static-v2';
+const CACHE_NAME = 'mccdsigner-pwa-v0.7.0-static-v3';
 const CORE = [
   './',
   './index.html',
@@ -48,7 +48,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  const isRegressionHarness = /\/(?:batch-test-v0\.7\.0(?:\.html|\.js|\.css)|processor-v0\.7\.0\.html|batch-bridge-v0\.7\.0(?:-r\d+)?\.js)$/.test(url.pathname);
+  const isRegressionHarness = /\/(?:batch-test-v0\.7\.0(?:\.html|\.js|\.css)|processor-v0\.7\.0\.html|batch-bridge-v0\\.7\\.0(?:-r\\d+)?\\.js|assets\\/app-v0\\.7\\.0-batch-r\\d+\\.js)$/.test(url.pathname);
   const networkFirst = request.mode === 'navigate'
     || url.pathname.endsWith('/index.html')
     || url.pathname.endsWith('/VERSION.txt')
