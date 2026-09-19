@@ -26,13 +26,25 @@
     return el;
   }
 
+  let appSettled = false;
+
   async function ensureDom() {
-    return waitFor(() => {
+    await waitFor(() => {
+      const app = document.getElementById('app');
       const pdf = document.getElementById('pdfFile');
       const detector = document.getElementById('detectorBadge');
       const review = document.getElementById('generateReview');
-      return pdf && detector && review ? true : false;
+      return app?.dataset?.started === 'true' && pdf && detector && review ? true : false;
     }, 30000, `MCCDSigner v${VERSION} interface startup`);
+
+    // v0.7.0 marks #app as started just before it attaches its UI listeners.
+    // Give that synchronous startup tail time to complete before the harness
+    // is allowed to inject the first regression PDF.
+    if (!appSettled) {
+      await sleep(1000);
+      appSettled = true;
+    }
+    return true;
   }
 
   function snapshot() {
@@ -77,9 +89,21 @@
     input.files = dt.files;
     input.dispatchEvent(new Event('change', { bubbles: true }));
 
+    // A healthy v0.7.0 listener changes this synchronously to "Opening PDF…".
+    // If it remains untouched, retry once after a short delay rather than
+    // sitting for two minutes on a dead first test.
+    await sleep(350);
+    const firstStatus = byId('documentStatus').textContent || '';
+    if (/No PDF loaded/i.test(firstStatus)) {
+      console.warn('[MCCD batch] First PDF hand-off was not observed; retrying once.');
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      await sleep(350);
+    }
+
     await waitFor(() => {
       const status = byId('documentStatus').textContent || '';
       if (/Could not open PDF/i.test(status)) throw new Error(status.trim());
+      if (/No PDF loaded/i.test(status)) return null;
       const placementCard = byId('placementCard');
       const pageSelect = byId('pageSelect');
       return !/Opening PDF/i.test(status) && !placementCard.classList.contains('hidden') && pageSelect.options.length > 0;
