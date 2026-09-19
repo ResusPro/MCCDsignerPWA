@@ -2,7 +2,7 @@
   'use strict';
 
   const EXPECTED_VERSION = '0.7.0';
-  const HARNESS_BUILD = 'r3';
+  const HARNESS_BUILD = 'r4';
   const els = {
     files: document.querySelector('#testFiles'),
     selection: document.querySelector('#selectionStatus'),
@@ -78,13 +78,13 @@
 
   async function ensureAppReady(forceReload = false) {
     if (forceReload) {
-      els.frame.src = `./processor-v0.7.0.html?batch=073&harness=${HARNESS_BUILD}&reload=${Date.now()}`;
+      els.frame.src = `./processor-v0.7.0.html?batch=074&harness=${HARNESS_BUILD}&reload=${Date.now()}`;
     }
     return waitFor(() => {
       const { win, doc } = frameContext();
       const marker = win.__MCCD_BATCH_READY__;
       const api = win.__MCCD_BATCH_API__;
-      return marker?.version === EXPECTED_VERSION &&
+      return marker?.version === EXPECTED_VERSION && marker?.harness === HARNESS_BUILD &&
         api?.version === EXPECTED_VERSION &&
         typeof api.open === 'function' &&
         typeof api.detect === 'function' &&
