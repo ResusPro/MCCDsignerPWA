@@ -3,6 +3,7 @@
 
   const EXPECTED_VERSION = '0.7.0';
   const HARNESS_BUILD = 'r5';
+  const RUNNER_BUILD = 'r5.1';
   const els = {
     files: document.querySelector('#testFiles'),
     selection: document.querySelector('#selectionStatus'),
@@ -152,10 +153,10 @@
     const pdfs = [];
 
     for (const file of selected) {
-      if (/\\.zip$/i.test(file.name) || /zip/i.test(file.type)) {
+      if (/\.zip$/i.test(file.name) || /zip/i.test(file.type)) {
         els.selection.textContent = `Reading ${file.name} locally with JSZip…`;
         const zip = await JSZip.loadAsync(file);
-        const entries = Object.values(zip.files).filter((entry) => !entry.dir && /\\.pdf$/i.test(entry.name));
+        const entries = Object.values(zip.files).filter((entry) => !entry.dir && /\.pdf$/i.test(entry.name));
 
         for (const entry of entries) {
           const bytes = await entry.async('uint8array');
@@ -165,7 +166,7 @@
           }
           pdfs.push(new File([bytes], name, { type: 'application/pdf', lastModified: Date.now() }));
         }
-      } else if (/\\.pdf$/i.test(file.name) || file.type === 'application/pdf') {
+      } else if (/\.pdf$/i.test(file.name) || file.type === 'application/pdf') {
         pdfs.push(file);
       }
     }
@@ -177,7 +178,7 @@
     els.count.textContent = '0 results';
     els.run.disabled = pdfs.length === 0;
     els.download.disabled = true;
-    els.selection.textContent = pdfs.length ? `${pdfs.length} PDF test${pdfs.length === 1 ? '' : 's'} ready — JSZip validated.` : 'No PDF tests were found.';
+    els.selection.textContent = pdfs.length ? `${pdfs.length} PDF test${pdfs.length === 1 ? '' : 's'} ready — JSZip validated · runner r5.1.` : 'No PDF tests were found.';
     els.selection.dataset.tone = pdfs.length ? 'ok' : 'error';
     setProgress(0, pdfs.length);
   }
