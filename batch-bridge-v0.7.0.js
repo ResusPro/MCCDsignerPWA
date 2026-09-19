@@ -114,13 +114,28 @@
 
   async function detect() {
     await ensureDom();
+
+    // The normal app usually starts detection automatically after a PDF opens.
+    // In the batch iframe that automatic tail can occasionally fail to fire,
+    // leaving the UI at "Not run" even though the PDF is open. Give the normal
+    // path a brief chance, then press the app's own "Run automatic detection"
+    // button if it is still idle. This does not alter the detector itself.
+    await sleep(1500);
+    const initialBadge = byId('detectorBadge').textContent.trim();
+    const initialTitle = byId('detectorTitle').textContent.trim();
+    const button = byId('runDetection');
+    if (!button.disabled && (/^Not run$/i.test(initialBadge) || /ready/i.test(initialTitle))) {
+      console.warn('[MCCD batch] v0.7.0 auto-start did not fire; invoking the normal Run automatic detection button.');
+      button.click();
+    }
+
     return waitFor(() => {
       const badge = byId('detectorBadge').textContent.trim();
       const title = byId('detectorTitle').textContent.trim();
-      const button = byId('runDetection');
+      const runButton = byId('runDetection');
       const finalBadge = /^(Ready|Check box|Manual check|Manual)/i.test(badge);
       const finalTitle = /Document ready|ME heading found|manual check|Manual placement|Manual output order/i.test(title);
-      if (!button.disabled && finalBadge && finalTitle) return snapshot();
+      if (!runButton.disabled && finalBadge && finalTitle) return snapshot();
       return null;
     }, 240000, 'v0.7.0 automatic detection');
   }
