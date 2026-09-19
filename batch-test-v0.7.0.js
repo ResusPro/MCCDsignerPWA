@@ -2,6 +2,7 @@
   'use strict';
 
   const EXPECTED_VERSION = '0.7.0';
+  const HARNESS_BUILD = 'r3';
   const els = {
     files: document.querySelector('#testFiles'),
     selection: document.querySelector('#selectionStatus'),
@@ -77,7 +78,7 @@
 
   async function ensureAppReady(forceReload = false) {
     if (forceReload) {
-      els.frame.src = `./processor-v0.7.0.html?batch=070&reload=${Date.now()}`;
+      els.frame.src = `./processor-v0.7.0.html?batch=073&harness=${HARNESS_BUILD}&reload=${Date.now()}`;
     }
     return waitFor(() => {
       const { win, doc } = frameContext();
