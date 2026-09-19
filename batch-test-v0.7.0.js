@@ -3,7 +3,7 @@
 
   const EXPECTED_VERSION = '0.7.0';
   const HARNESS_BUILD = 'r5';
-  const RUNNER_BUILD = 'r5.1';
+  const RUNNER_BUILD = 'r5.2';
   const els = {
     files: document.querySelector('#testFiles'),
     selection: document.querySelector('#selectionStatus'),
@@ -78,15 +78,45 @@
   }
 
   async function ensureAppReady(forceReload = false) {
+    let reloadToken = null;
+
     if (forceReload) {
-      els.frame.src = `./processor-v0.7.0.html?batch=075&harness=${HARNESS_BUILD}&reload=${Date.now()}`;
+      reloadToken = `${HARNESS_BUILD}-${RUNNER_BUILD}-${Date.now()}`;
+
+      // IMPORTANT: wait for the NEW iframe document to load. Without this,
+      // contentWindow can briefly expose the previous document's batch API,
+      // which makes the runner call open() on a detached/stale processor.
+      await new Promise((resolve, reject) => {
+        const timer = window.setTimeout(() => {
+          reject(new Error(`MCCDSigner v${EXPECTED_VERSION} processor iframe reload timed out`));
+        }, 30000);
+
+        const onLoad = () => {
+          window.clearTimeout(timer);
+          resolve();
+        };
+
+        els.frame.addEventListener('load', onLoad, { once: true });
+        els.frame.src = `./processor-v0.7.0.html?batch=075&harness=${HARNESS_BUILD}&runner=${RUNNER_BUILD}&instance=${encodeURIComponent(reloadToken)}`;
+      });
     }
+
     return waitFor(() => {
       const { win, doc } = frameContext();
+
+      // If this was an explicit reload, verify that we are looking at the
+      // newly navigated document rather than the old WindowProxy/document.
+      if (reloadToken) {
+        const params = new URLSearchParams(win.location.search);
+        if (params.get('instance') !== reloadToken) return null;
+      }
+
       const marker = win.__MCCD_BATCH_READY__;
       const api = win.__MCCD_BATCH_API__;
-      return marker?.version === EXPECTED_VERSION && marker?.harness === HARNESS_BUILD &&
+      return marker?.version === EXPECTED_VERSION &&
+        marker?.harness === HARNESS_BUILD &&
         api?.version === EXPECTED_VERSION &&
+        api?.harness === HARNESS_BUILD &&
         typeof api.open === 'function' &&
         typeof api.detect === 'function' &&
         typeof api.review === 'function'
@@ -178,7 +208,7 @@
     els.count.textContent = '0 results';
     els.run.disabled = pdfs.length === 0;
     els.download.disabled = true;
-    els.selection.textContent = pdfs.length ? `${pdfs.length} PDF test${pdfs.length === 1 ? '' : 's'} ready — JSZip validated · runner r5.1.` : 'No PDF tests were found.';
+    els.selection.textContent = pdfs.length ? `${pdfs.length} PDF test${pdfs.length === 1 ? '' : 's'} ready — JSZip validated · runner r5.2.` : 'No PDF tests were found.';
     els.selection.dataset.tone = pdfs.length ? 'ok' : 'error';
     setProgress(0, pdfs.length);
   }
