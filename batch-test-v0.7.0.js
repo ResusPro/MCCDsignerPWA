@@ -2,7 +2,7 @@
   'use strict';
 
   const EXPECTED_VERSION = '0.7.0';
-  const HARNESS_BUILD = 'r4';
+  const HARNESS_BUILD = 'r5';
   const els = {
     files: document.querySelector('#testFiles'),
     selection: document.querySelector('#selectionStatus'),
@@ -78,7 +78,7 @@
 
   async function ensureAppReady(forceReload = false) {
     if (forceReload) {
-      els.frame.src = `./processor-v0.7.0.html?batch=074&harness=${HARNESS_BUILD}&reload=${Date.now()}`;
+      els.frame.src = `./processor-v0.7.0.html?batch=075&harness=${HARNESS_BUILD}&reload=${Date.now()}`;
     }
     return waitFor(() => {
       const { win, doc } = frameContext();
@@ -147,16 +147,29 @@
   }
 
   async function readSelection(fileList) {
+    if (!window.JSZip) throw new Error('The local ZIP helper did not load.');
     const selected = [...fileList];
     const pdfs = [];
+
     for (const file of selected) {
-      if (/\.zip$/i.test(file.name) || /zip/i.test(file.type)) {
-        els.selection.textContent = `Reading ${file.name} locally…`;
-        pdfs.push(...await pdfsFromZip(file));
-      } else if (/\.pdf$/i.test(file.name) || file.type === 'application/pdf') {
+      if (/\\.zip$/i.test(file.name) || /zip/i.test(file.type)) {
+        els.selection.textContent = `Reading ${file.name} locally with JSZip…`;
+        const zip = await JSZip.loadAsync(file);
+        const entries = Object.values(zip.files).filter((entry) => !entry.dir && /\\.pdf$/i.test(entry.name));
+
+        for (const entry of entries) {
+          const bytes = await entry.async('uint8array');
+          const name = entry.name.split('/').pop();
+          if (bytes.length < 5 || String.fromCharCode(...bytes.slice(0, 5)) !== '%PDF-') {
+            throw new Error(`${name}: extracted file is not a valid PDF header.`);
+          }
+          pdfs.push(new File([bytes], name, { type: 'application/pdf', lastModified: Date.now() }));
+        }
+      } else if (/\\.pdf$/i.test(file.name) || file.type === 'application/pdf') {
         pdfs.push(file);
       }
     }
+
     pdfs.sort((a, b) => natural.compare(a.name, b.name));
     state.files = pdfs;
     state.results = [];
@@ -164,7 +177,7 @@
     els.count.textContent = '0 results';
     els.run.disabled = pdfs.length === 0;
     els.download.disabled = true;
-    els.selection.textContent = pdfs.length ? `${pdfs.length} PDF test${pdfs.length === 1 ? '' : 's'} ready.` : 'No PDF tests were found.';
+    els.selection.textContent = pdfs.length ? `${pdfs.length} PDF test${pdfs.length === 1 ? '' : 's'} ready — JSZip validated.` : 'No PDF tests were found.';
     els.selection.dataset.tone = pdfs.length ? 'ok' : 'error';
     setProgress(0, pdfs.length);
   }
