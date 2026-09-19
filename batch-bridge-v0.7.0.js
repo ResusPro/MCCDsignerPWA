@@ -37,11 +37,15 @@
       return app?.dataset?.started === 'true' && pdf && detector && review ? true : false;
     }, 30000, `MCCDSigner v${VERSION} interface startup`);
 
-    // v0.7.0 marks #app as started just before it attaches its UI listeners.
-    // Give that synchronous startup tail time to complete before the harness
-    // is allowed to inject the first regression PDF.
+    // The app creates its DOM before attaching the input/change handlers.
+    // Its offline status is updated only after those listeners have been
+    // attached, so use that as a reliable "startup complete" marker.
     if (!appSettled) {
-      await sleep(1000);
+      await waitFor(() => {
+        const status = document.getElementById('offlineStatus')?.textContent?.trim() || '';
+        return status && !/Checking offline cache/i.test(status) ? true : false;
+      }, 30000, `MCCDSigner v${VERSION} listener startup`);
+      await sleep(250);
       appSettled = true;
     }
     return true;
@@ -87,23 +91,28 @@
     const dt = new DataTransfer();
     dt.items.add(file);
     input.files = dt.files;
-    input.dispatchEvent(new Event('change', { bubbles: true }));
 
-    // A healthy v0.7.0 listener changes this synchronously to "Opening PDF…".
-    // If it remains untouched, retry once after a short delay rather than
-    // sitting for two minutes on a dead first test.
-    await sleep(350);
-    const firstStatus = byId('documentStatus').textContent || '';
-    if (/No PDF loaded/i.test(firstStatus)) {
-      console.warn('[MCCD batch] First PDF hand-off was not observed; retrying once.');
+    // Keep retrying the normal input change event until the app acknowledges
+    // it. This avoids a race between the batch bridge and v0.7.0's listener
+    // attachment, without changing the detector itself.
+    let acknowledged = false;
+    for (let attempt = 1; attempt <= 12; attempt += 1) {
       input.dispatchEvent(new Event('change', { bubbles: true }));
-      await sleep(350);
+      await sleep(500);
+      const status = byId('documentStatus').textContent || '';
+      if (!/No PDF loaded/i.test(status)) {
+        acknowledged = true;
+        break;
+      }
+      console.warn(`[MCCD batch] PDF hand-off attempt ${attempt} was not observed.`);
+    }
+    if (!acknowledged) {
+      throw new Error(`${name}: v0.7.0 PDF input listener did not respond after 6 seconds.`);
     }
 
     await waitFor(() => {
       const status = byId('documentStatus').textContent || '';
       if (/Could not open PDF/i.test(status)) throw new Error(status.trim());
-      if (/No PDF loaded/i.test(status)) return null;
       const placementCard = byId('placementCard');
       const pageSelect = byId('pageSelect');
       return !/Opening PDF/i.test(status) && !placementCard.classList.contains('hidden') && pageSelect.options.length > 0;
