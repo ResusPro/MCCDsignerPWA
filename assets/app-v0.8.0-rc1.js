@@ -108,7 +108,7 @@ end`},ol=function(){return`<`+[...arguments].join(``)+`>`},sl=function(e){return
       <span class="privacy-dot" aria-hidden="true"></span>
       <div>
         <strong>Processed in this browser</strong>
-        <p>No upload, analytics or telemetry. The selected PDF and signature are kept only in this page session.</p>
+        <p>No upload, analytics or telemetry. PDFs are processed locally; the optional saved signer profile, signature and folder handles stay only in this browser's local storage.</p>
       </div>
       <span id="offlineStatus" class="status-pill">Checking offline cache…</span>
     </section>
