@@ -201,30 +201,37 @@ async function reconnectFolders(){
 async function refreshIncoming(){
   var select=byId("wfPdfSelect"),dir=state.folders.incoming;
   if(!select)return;
-  state.files=[];
-  if(!dir){select.innerHTML='<option value="">Choose Incoming folder first</option>';return;}
+  if(!dir){state.files=[];select.innerHTML='<option value="">Choose Incoming folder first</option>';return;}
   if(!(await permission(dir,false))){
+    state.files=[];
     select.innerHTML='<option value="">Incoming permission required</option>';
     setStatus("wfIncomingStatus","Click Reconnect saved folders.","warning");return;
   }
+
+  var found=[];
+  var seen=new Set();
   for await(var entry of dir.entries()){
     var name=entry[0],handle=entry[1];
     if(handle.kind!=="file"||!/\.pdf$/i.test(name))continue;
+    if(seen.has(name))continue;
+    seen.add(name);
     try{
       var file=await handle.getFile();
-      state.files.push({name:name,handle:handle,lastModified:file.lastModified,size:file.size});
+      found.push({name:name,handle:handle,lastModified:file.lastModified,size:file.size});
     }catch(e){}
   }
-  state.files.sort(function(a,b){return b.lastModified-a.lastModified||a.name.localeCompare(b.name,"en-GB",{numeric:true});});
+
+  found.sort(function(a,b){return b.lastModified-a.lastModified||a.name.localeCompare(b.name,"en-GB",{numeric:true});});
+  state.files=found;
   select.innerHTML="";
-  if(!state.files.length){select.innerHTML='<option value="">No PDFs found</option>';setStatus("wfIncomingStatus","No PDFs currently in Incoming.","");return;}
-  state.files.forEach(function(item,index){
+  if(!found.length){select.innerHTML='<option value="">No PDFs found</option>';setStatus("wfIncomingStatus","No PDFs currently in Incoming.","");return;}
+  found.forEach(function(item,index){
     var option=document.createElement("option");
     option.value=String(index);
     option.textContent=item.name+" — "+new Date(item.lastModified).toLocaleString("en-GB");
     select.append(option);
   });
-  setStatus("wfIncomingStatus",state.files.length+" PDF"+(state.files.length===1?"":"s")+" available; newest first.","ok");
+  setStatus("wfIncomingStatus",found.length+" PDF"+(found.length===1?"":"s")+" available; newest first.","ok");
 }
 async function openSelected(){
   var select=byId("wfPdfSelect");
@@ -323,18 +330,23 @@ function installUi(){
   document.querySelector("#pdfFile").addEventListener("change",function(){state.source=null;setStatus("wfTransactionStatus","","");});
 }
 window.__MCCD_WORKFLOW_APPROVE__=function(){return approveWorkflow().catch(function(e){setStatus("wfTransactionStatus","Workflow stopped safely: "+e.message+" The original is not removed unless both destination copies verify first.","error");alert("Folder workflow could not complete:\n\n"+e.message);});};
-window.__MCCD_WORKFLOW_INIT__=async function(){
-  installUi();
-  var mobile=/Android/i.test(navigator.userAgent)||!window.showDirectoryPicker;
-  if(mobile){
-    var desktopPanel=byId("wfDesktopFolderPanel");
-    var mobilePanel=byId("wfMobilePanel");
-    if(desktopPanel)desktopPanel.classList.add("hidden");
-    if(mobilePanel)mobilePanel.classList.remove("hidden");
-    var incomingBlock=byId("wfPdfSelect")&&byId("wfPdfSelect").closest(".wf-incoming");
-    if(incomingBlock)incomingBlock.classList.add("hidden");
-  }
-  await Promise.allSettled([restoreProfile(),mobile?Promise.resolve():restoreFolders()]);
+var workflowInitPromise=null;
+window.__MCCD_WORKFLOW_INIT__=function(){
+  if(workflowInitPromise)return workflowInitPromise;
+  workflowInitPromise=(async function(){
+    installUi();
+    var mobile=/Android/i.test(navigator.userAgent)||!window.showDirectoryPicker;
+    if(mobile){
+      var desktopPanel=byId("wfDesktopFolderPanel");
+      var mobilePanel=byId("wfMobilePanel");
+      if(desktopPanel)desktopPanel.classList.add("hidden");
+      if(mobilePanel)mobilePanel.classList.remove("hidden");
+      var incomingBlock=byId("wfPdfSelect")&&byId("wfPdfSelect").closest(".wf-incoming");
+      if(incomingBlock)incomingBlock.classList.add("hidden");
+    }
+    await Promise.allSettled([restoreProfile(),mobile?Promise.resolve():restoreFolders()]);
+  })();
+  return workflowInitPromise;
 };
 if(window.__MCCD_APP_API__) {
   queueMicrotask(function(){ window.__MCCD_WORKFLOW_INIT__().catch(function(e){ console.error(e); }); });
