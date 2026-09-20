@@ -276,7 +276,7 @@ async function approveWorkflow(){
   var incoming=state.folders.incoming,signed=state.folders.signed,archive=state.folders.archive;
   if(!incoming||!signed||!archive)throw new Error("Incoming, Signed and Archive folders must all be selected.");
   if(!(await permission(incoming,true))||!(await permission(signed,true))||!(await permission(archive,true)))throw new Error("Folder permission was not granted.");
-  var signedName=await availableName(signed,doc.reviewFileName||state.source.name.replace(/\.pdf$/i,"")+"-signed.pdf");
+  var signedName=await availableName(signed,doc.reviewFileName||state.source.name.replace(/\.pdf$/i,"")+"-NFsigned.pdf");
   setStatus("wfTransactionStatus","Writing and verifying signed PDF…","");
   await writeVerify(signed,signedName,doc.reviewBytes);
   var archiveName=await availableName(archive,state.source.name);
