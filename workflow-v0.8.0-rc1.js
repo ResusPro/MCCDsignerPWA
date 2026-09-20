@@ -17,7 +17,7 @@ function currentInitials(){
   var field=byId("wfFileInitials");
   var value=String((field&&field.value)||state.fileInitials||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
   if(!value){
-    var name=window.__MCCD_APP_API__?.getProfile()?.full_name||"";
+    var name=(byId("fullName")&&byId("fullName").value)||"";
     value=deriveInitials(name);
     if(field)field.value=value;
   }
@@ -356,7 +356,7 @@ window.__MCCD_WORKFLOW_INIT__=function(){
   if(workflowInitPromise)return workflowInitPromise;
   workflowInitPromise=(async function(){
     installUi();
-    var current=window.__MCCD_APP_API__?.getProfile();if(byId("wfFileInitials")&&!byId("wfFileInitials").value)byId("wfFileInitials").value=state.fileInitials||deriveInitials(current?.full_name||"");
+    if(byId("wfFileInitials")&&!byId("wfFileInitials").value)byId("wfFileInitials").value=state.fileInitials||deriveInitials((byId("fullName")&&byId("fullName").value)||"");
     var mobile=/Android/i.test(navigator.userAgent)||!window.showDirectoryPicker;
     if(mobile){
       var desktopPanel=byId("wfDesktopFolderPanel");
