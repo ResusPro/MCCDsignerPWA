@@ -1,3 +1,6 @@
-MCCDSigner PWA v0.7.0
-Fast recovery build based on the proven v0.4 stamping workflow.
-Uses form geometry to rank/orient pages and cropped lower-section OCR to locate the ME box.
+MCCDSigner PWA v0.8.0-rc1
+Main deployment now serves the validated v0.7.0 detector with the v0.8 local workflow.
+Desktop: remembered Incoming / Signed / Archive folders with verified copy-before-delete handling.
+Android: individual PDF picker followed by review and Share back to OneDrive.
+Final output uses -signed.pdf naming and has no TEST watermark.
+Transparent PNG signature required for final output.
