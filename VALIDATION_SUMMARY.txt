@@ -19,7 +19,7 @@ Release-candidate output checks
 -------------------------------
 - Regression harness completed successfully on desktop.
 - Final signed output generated without the TEST watermark.
-- Final filename uses -NFsigned.pdf.
+- Final filename uses -<signer initials>signed.pdf, derived from or explicitly stored in the signer profile.
 - Transparent PNG signature tested successfully.
 - Desktop Incoming -> Signed + Archive workflow previously completed successfully.
 - Android individual-PDF picker -> review/sign -> Share workflow previously completed successfully in the v0.8 beta and is retained in rc1.
