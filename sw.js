@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.8.0-rc1-staging-v1';
+const CACHE_NAME = 'mccdsigner-pwa-v0.8.0-rc1-main-v1';
 const CORE = [
   './',
   './index.html',
@@ -8,9 +8,11 @@ const CORE = [
   './VALIDATION_SUMMARY.txt',
   './THIRD_PARTY_NOTICES.txt',
   './VERSION.txt',
-  './startup-v0.7.0.js',
-  './assets/app-v0.7.0.js',
+  './startup-v0.8.0-rc1.js',
+  './workflow-v0.8.0-rc1.js',
+  './assets/app-v0.8.0-rc1.js',
   './assets/app-v0.7.0.css',
+  './assets/workflow-v0.8.0-rc1.css',
   './assets/pdf.worker.mjs',
   './pdfjs-wasm/jbig2.wasm',
   './pdfjs-wasm/openjpeg.wasm',
@@ -21,12 +23,11 @@ const CORE = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './samples/MCCDSigner_PWA_test_form.pdf',
-  './samples/dummy-signature.png',
   './ocr/worker.min.js',
   './ocr/lang/eng.traineddata.gz',
   './ocr/core/tesseract-core-lstm.wasm.js',
   './ocr/core/tesseract-core-lstm.wasm'
-];
+]
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE)));
@@ -49,7 +50,7 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
 
   const isRegressionHarness = /\/(?:batch-test-v0\.7\.0(?:\.html|\.js|\.css)|processor-v0\.7\.0\.html|batch-bridge-v0\\.7\\.0(?:-r\\d+)?\\.js|assets\\/app-v0\\.7\\.0-batch-r\\d+\\.js|batch-test-v0\.8\.0-rc1(?:\.html|\.js|\.css)|processor-v0\.8\.0-rc1\.html|assets\\/app-v0\\.8\\.0-rc1-batch-r\\d+\\.js)$/.test(url.pathname);
-  const isRc1Staging = /\/(?:v0\.8-rc1\.html|startup-v0\.8\.0-rc1\.js|workflow-v0\.8\.0-rc1\.js|assets\/app-v0\.8\.0-rc1\.js|assets\/workflow-v0\.8\.0-rc1\.css)$/.test(url.pathname);
+  const isRc1Staging = /\/(?:index\.html|v0\.8-rc1\.html|startup-v0\.8\.0-rc1\.js|workflow-v0\.8\.0-rc1\.js|assets\/app-v0\.8\.0-rc1\.js|assets\/workflow-v0\.8\.0-rc1\.css|manifest\.webmanifest)$/.test(url.pathname);
   const networkFirst = request.mode === 'navigate'
     || url.pathname.endsWith('/index.html')
     || url.pathname.endsWith('/VERSION.txt')
