@@ -4,10 +4,27 @@
 var VERSION="0.8.0-rc1";
 var DB_NAME="mccdsigner-local-v1";
 var STORE="kv";
-var state={folders:{incoming:null,signed:null,archive:null},source:null,files:[],db:null};
+var state={folders:{incoming:null,signed:null,archive:null},source:null,files:[],db:null,fileInitials:""};
 
 function byId(id){return document.getElementById(id);}
 function setStatus(id,text,tone){var el=byId(id);if(!el)return;el.textContent=text||"";el.dataset.tone=tone||"";}
+function deriveInitials(name){
+  var clean=String(name||"").trim().replace(/^(DR|DOCTOR|MR|MRS|MISS|MS|PROF|PROFESSOR)\.?\s+/i,"");
+  var parts=clean.split(/\s+/).filter(Boolean);
+  return parts.map(function(part){return part.replace(/[^A-Za-z0-9]/g,"").charAt(0);}).join("").toUpperCase();
+}
+function currentInitials(){
+  var field=byId("wfFileInitials");
+  var value=String((field&&field.value)||state.fileInitials||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,"");
+  if(!value){
+    var name=window.__MCCD_APP_API__?.getProfile()?.full_name||"";
+    value=deriveInitials(name);
+    if(field)field.value=value;
+  }
+  state.fileInitials=value;
+  return value;
+}
+window.__MCCD_FILENAME_INITIALS__=currentInitials;
 function openDb(){
   if(state.db)return Promise.resolve(state.db);
   return new Promise(function(resolve,reject){
@@ -77,6 +94,7 @@ async function saveProfile(){
     full_name:p.full_name,
     qualifications:p.qualifications,
     gmc_number:p.gmc_number,
+    file_initials:currentInitials(),
     signature_mime:p.signature_mime,
     signature_bytes:p.signature_bytes?p.signature_bytes.buffer:null
   });
@@ -92,7 +110,7 @@ async function restoreProfile(){
     signature_mime:p.signature_mime||"image/png",
     signature_bytes:p.signature_bytes?new Uint8Array(p.signature_bytes):null
   });
-  setStatus("wfProfileStatus","Saved local profile loaded"+(p.full_name?": "+p.full_name:"")+".","ok");
+  state.fileInitials=(p.file_initials||deriveInitials(p.full_name||"")).toUpperCase();var fi=byId("wfFileInitials");if(fi)fi.value=state.fileInitials;setStatus("wfProfileStatus","Saved local profile loaded"+(p.full_name?": "+p.full_name:"")+".","ok");
 }
 async function importSettings(file){
   var text=(await file.text()).replace(/^\uFEFF/,"");
@@ -101,7 +119,8 @@ async function importSettings(file){
   var p={
     full_name:pick(root,["full_name","clinician_name","name","doctor_name"]),
     qualifications:pick(root,["qualifications","credentials","postnominals","post_nominals"]),
-    gmc_number:pick(root,["gmc_number","gmc","gmcNumber","registration_number"])
+    gmc_number:pick(root,["gmc_number","gmc","gmcNumber","registration_number"]),
+    file_initials:pick(root,["file_initials","filename_initials","initials","user_initials"])
   };
   var dataUrl=pick(root,["signature_data_url","signatureDataUrl","signature.data_url","signature.dataUrl"]);
   var base64=pick(root,["signature_base64","signatureBase64","signature.base64"]);
@@ -113,6 +132,7 @@ async function importSettings(file){
     p.signature_bytes=base64ToBytes(base64);p.signature_mime=String(mime);
   }
   await window.__MCCD_APP_API__.setProfile(p);
+  state.fileInitials=String(p.file_initials||deriveInitials(p.full_name||"")).toUpperCase().replace(/[^A-Z0-9]/g,"");var fi=byId("wfFileInitials");if(fi)fi.value=state.fileInitials;
   await saveProfile();
   if(p.signature_bytes){
     setStatus("wfProfileStatus","Imported "+file.name+": name, qualifications, GMC and embedded signature loaded.","ok");
@@ -134,7 +154,7 @@ async function importSignature(file){
 }
 async function forgetProfile(){
   await deleteValue("profile");
-  await window.__MCCD_APP_API__.setProfile({full_name:"",qualifications:"",gmc_number:""});
+  await window.__MCCD_APP_API__.setProfile({full_name:"",qualifications:"",gmc_number:""});state.fileInitials="";var fi=byId("wfFileInitials");if(fi)fi.value="";
   await window.__MCCD_APP_API__.loadDummySignature();
   setStatus("wfProfileStatus","Saved local profile removed. Signer details cleared; a signature must be selected before signing.","warning");
 }
@@ -145,6 +165,7 @@ function exportProfile(){
     full_name:p.full_name,
     qualifications:p.qualifications,
     gmc_number:p.gmc_number,
+    file_initials:currentInitials(),
     signature_mime:p.signature_mime,
     signature_data_url:p.signature_bytes?bytesToDataUrl(p.signature_bytes,p.signature_mime):null
   };
@@ -276,7 +297,7 @@ async function approveWorkflow(){
   var incoming=state.folders.incoming,signed=state.folders.signed,archive=state.folders.archive;
   if(!incoming||!signed||!archive)throw new Error("Incoming, Signed and Archive folders must all be selected.");
   if(!(await permission(incoming,true))||!(await permission(signed,true))||!(await permission(archive,true)))throw new Error("Folder permission was not granted.");
-  var signedName=await availableName(signed,doc.reviewFileName||state.source.name.replace(/\.pdf$/i,"")+"-NFsigned.pdf");
+  var signedName=await availableName(signed,doc.reviewFileName||state.source.name.replace(/\.pdf$/i,"")+"-"+currentInitials()+"signed.pdf");
   setStatus("wfTransactionStatus","Writing and verifying signed PDF…","");
   await writeVerify(signed,signedName,doc.reviewBytes);
   var archiveName=await availableName(archive,state.source.name);
@@ -298,7 +319,7 @@ function installUi(){
     '<section id="mccdWorkflowCard" class="card mccd-workflow-card">'+
     '<div class="section-heading"><div><span class="step">W</span><h2>Local workflow</h2></div><p>Optional desktop workflow for locally-synced OneDrive folders. No Microsoft cloud API is used.</p></div>'+
     '<div class="wf-columns">'+
-    '<div class="wf-panel"><h3>Clinician settings</h3><p>Loads desktop JSON fields such as <code>full_name</code>, <code>qualifications</code>, <code>gmc_number</code> and compatible aliases.</p>'+
+    '<div class="wf-panel"><h3>Clinician settings</h3><p>Loads desktop JSON fields such as <code>full_name</code>, <code>qualifications</code>, <code>gmc_number</code> and compatible aliases.</p><div class="wf-initials-row"><label>Filename initials <input id="wfFileInitials" type="text" maxlength="8" autocomplete="off" placeholder="e.g. NF"></label><small>Used in signed filenames, e.g. <code>-NFsigned.pdf</code>. Auto-derived from the clinician name if left blank.</small></div>'+
     '<div class="button-row wrap"><label class="file-button secondary">Load settings JSON<input id="wfSettingsFile" type="file" accept="application/json,.json"></label>'+
     '<label class="file-button secondary">Choose transparent signature PNG<input id="wfSignatureFile" type="file" accept="image/png"></label>'+
     '<button id="wfSaveProfile" class="secondary compact" type="button">Save current profile</button>'+
@@ -318,7 +339,7 @@ function installUi(){
   );
   byId("wfSettingsFile").addEventListener("change",async function(e){var f=e.target.files&&e.target.files[0];if(!f)return;try{await importSettings(f);}catch(err){setStatus("wfProfileStatus","Could not import settings: "+err.message,"error");}e.target.value="";});
   byId("wfSignatureFile").addEventListener("change",async function(e){var f=e.target.files&&e.target.files[0];if(!f)return;try{await importSignature(f);}catch(err){setStatus("wfProfileStatus",err.message,"error");}e.target.value="";});
-  byId("wfSaveProfile").addEventListener("click",function(){saveProfile().catch(function(e){setStatus("wfProfileStatus",e.message,"error");});});
+  byId("wfFileInitials").addEventListener("input",function(){this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,"");state.fileInitials=this.value;});byId("wfSaveProfile").addEventListener("click",function(){saveProfile().catch(function(e){setStatus("wfProfileStatus",e.message,"error");});});
   byId("wfExportProfile").addEventListener("click",exportProfile);
   byId("wfForgetProfile").addEventListener("click",function(){forgetProfile().catch(function(e){setStatus("wfProfileStatus",e.message,"error");});});
   byId("wfChooseIncoming").addEventListener("click",function(){chooseFolder("incoming").catch(function(e){setStatus("wfFolderStatus",e.message,"error");});});
@@ -335,6 +356,7 @@ window.__MCCD_WORKFLOW_INIT__=function(){
   if(workflowInitPromise)return workflowInitPromise;
   workflowInitPromise=(async function(){
     installUi();
+    var current=window.__MCCD_APP_API__?.getProfile();if(byId("wfFileInitials")&&!byId("wfFileInitials").value)byId("wfFileInitials").value=state.fileInitials||deriveInitials(current?.full_name||"");
     var mobile=/Android/i.test(navigator.userAgent)||!window.showDirectoryPicker;
     if(mobile){
       var desktopPanel=byId("wfDesktopFolderPanel");
