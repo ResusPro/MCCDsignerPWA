@@ -1,7 +1,7 @@
 {
-  "name": "MCCDSigner PWA v0.7.0 Prototype",
+  "name": "MCCDSigner PWA v0.8.0-rc1",
   "short_name": "MCCDSigner",
-  "description": "Local-only fast MCCD orientation and Medical Examiner stamping prototype.",
+  "description": "Local-only MCCD orientation, Medical Examiner stamping and desktop/mobile workflow.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
