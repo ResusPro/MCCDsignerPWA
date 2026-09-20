@@ -336,4 +336,7 @@ window.__MCCD_WORKFLOW_INIT__=async function(){
   }
   await Promise.allSettled([restoreProfile(),mobile?Promise.resolve():restoreFolders()]);
 };
+if(window.__MCCD_APP_API__) {
+  queueMicrotask(function(){ window.__MCCD_WORKFLOW_INIT__().catch(function(e){ console.error(e); }); });
+}
 })();
