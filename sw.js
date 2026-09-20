@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.7.0-static-v6';
+const CACHE_NAME = 'mccdsigner-pwa-v0.8.0-rc1-staging-v1';
 const CORE = [
   './',
   './index.html',
@@ -48,11 +48,13 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  const isRegressionHarness = /\/(?:batch-test-v0\.7\.0(?:\.html|\.js|\.css)|processor-v0\.7\.0\.html|batch-bridge-v0\\.7\\.0(?:-r\\d+)?\\.js|assets\\/app-v0\\.7\\.0-batch-r\\d+\\.js)$/.test(url.pathname);
+  const isRegressionHarness = /\/(?:batch-test-v0\.7\.0(?:\.html|\.js|\.css)|processor-v0\.7\.0\.html|batch-bridge-v0\\.7\\.0(?:-r\\d+)?\\.js|assets\\/app-v0\\.7\\.0-batch-r\\d+\\.js|batch-test-v0\.8\.0-rc1(?:\.html|\.js|\.css)|processor-v0\.8\.0-rc1\.html|assets\\/app-v0\\.8\\.0-rc1-batch-r\\d+\\.js)$/.test(url.pathname);
+  const isRc1Staging = /\/(?:v0\.8-rc1\.html|startup-v0\.8\.0-rc1\.js|workflow-v0\.8\.0-rc1\.js|assets\/app-v0\.8\.0-rc1\.js|assets\/workflow-v0\.8\.0-rc1\.css)$/.test(url.pathname);
   const networkFirst = request.mode === 'navigate'
     || url.pathname.endsWith('/index.html')
     || url.pathname.endsWith('/VERSION.txt')
-    || isRegressionHarness;
+    || isRegressionHarness
+    || isRc1Staging;
 
   if (networkFirst) {
     event.respondWith(
