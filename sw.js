@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.8.0-rc1-main-v3';
+const CACHE_NAME = 'mccdsigner-pwa-v0.8.0-rc1-main-v4';
 const CORE = [
   './',
   './index.html',
