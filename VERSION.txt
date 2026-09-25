@@ -1,6 +1,22 @@
-MCCDSigner PWA v0.8.0-rc1
-Main deployment now serves the validated v0.7.0 detector with the v0.8 local workflow.
-Desktop: remembered Incoming / Signed / Archive folders with verified copy-before-delete handling.
-Android: individual PDF picker followed by review and Share back to OneDrive.
-Final output uses -NFsigned.pdf naming and has no TEST watermark.
-Transparent PNG signature required for final output.
+MCCDSigner PWA v0.8.0
+
+Main release.
+
+Uses the validated v0.7.0 detector/orientation/Medical Examiner box engine with the v0.8 workflow.
+
+Desktop:
+- remembered Incoming / Signed / Archive folders
+- signed and archive files are written and SHA-256 verified before the Incoming original is removed
+- duplicate Incoming-list entries are suppressed
+
+Android:
+- open an individual PDF using the system document picker
+- review and sign locally
+- share the signed PDF back to OneDrive or another approved destination
+
+Signing:
+- saved local clinician profile and transparent PNG signature
+- per-user filename initials
+- signed filename format: <original>-<initials>signed.pdf
+- no additional watermark
+- 90°/270° detected Medical Examiner boxes are automatically widened when necessary
