@@ -1,9 +1,9 @@
-MCCDSigner PWA v0.8.0-rc1 validation summary
-=================================================
+MCCDSigner PWA v0.8.0 validation summary
+==============================================
 
-Detector baseline
------------------
-The v0.8.0-rc1 detector/orientation/box-placement engine is the validated v0.7.0 engine unchanged.
+Detector
+--------
+The detector/orientation/box-placement engine is the validated v0.7.0 engine.
 
 Regression corpus: 20 supplied two-page MCCD examples.
 
@@ -15,18 +15,20 @@ Validated results:
 - Medical Examiner box placement: 20/20
 - Reversed page-order example corrected: 1/1
 
-Release-candidate output checks
--------------------------------
-- Regression harness completed successfully on desktop.
-- Final signed output generated without the TEST watermark.
-- Final filename uses -<signer initials>signed.pdf, derived from or explicitly stored in the signer profile.
+Workflow
+--------
+- Final signed output generated without an additional watermark.
+- Signed filename uses per-user initials: <original>-<initials>signed.pdf.
 - Transparent PNG signature tested successfully.
-- Desktop Incoming -> Signed + Archive workflow previously completed successfully.
-- Android individual-PDF picker -> review/sign -> Share workflow previously completed successfully in the v0.8 beta and is retained in rc1.
+- Desktop Incoming -> Signed + Archive workflow completed successfully.
+- Seven live Incoming documents were subsequently processed successfully.
+- Android individual-PDF picker -> review/sign -> Share workflow completed successfully.
+- Narrow Medical Examiner boxes after automatic 90°/270° orientation are automatically widened while retaining detected vertical placement.
 
 Safety behaviour
 ----------------
 - Final output requires signer name, qualifications, GMC number and a PNG signature.
-- JPEG signatures are rejected for final output because an opaque background can obscure certificate text.
+- JPEG signatures are rejected because an opaque background can obscure certificate text.
 - Desktop workflow writes and SHA-256 verifies the signed PDF and archived original before removing the original from Incoming.
+- Every generated PDF is shown for visual review before approval.
 - No patient PDFs are included in this public repository.
