@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.8.1-main-v1';
+const CACHE_NAME = 'mccdsigner-pwa-v0.8.2-main-v1';
 
 const CORE = [
   './',
@@ -11,7 +11,7 @@ const CORE = [
   './VERSION.txt',
   './startup-v0.8.1.js',
   './workflow-v0.8.1.js',
-  './assets/app-v0.8.1.js',
+  './assets/app-v0.8.2.js',
   './assets/app-v0.7.0.css',
   './assets/workflow-v0.8.1.css',
   './assets/pdf.worker.mjs',
@@ -54,7 +54,7 @@ self.addEventListener('fetch', (event) => {
     /\/(?:batch-test-v0\.7\.0(?:\.html|\.js|\.css)|processor-v0\.7\.0\.html|batch-bridge-v0\.7\.0(?:-r\d+)?\.js|assets\/app-v0\.7\.0-batch-r\d+\.js|batch-test-v0\.8\.0-rc1(?:\.html|\.js|\.css)|processor-v0\.8\.0-rc1\.html|assets\/app-v0\.8\.0-rc1-batch-r\d+\.js)$/.test(url.pathname);
 
   const isMainRelease =
-    /\/(?:index\.html|startup-v0\.8\.1\.js|workflow-v0\.8\.1\.js|assets\/app-v0\.8\.1\.js|assets\/workflow-v0\.8\.1\.css|manifest\.webmanifest)$/.test(url.pathname);
+    /\/(?:index\.html|startup-v0\.8\.1\.js|workflow-v0\.8\.1\.js|assets\/app-v0\.8\.2\.js|assets\/workflow-v0\.8\.1\.css|manifest\.webmanifest)$/.test(url.pathname);
 
   const networkFirst =
     request.mode === 'navigate'
