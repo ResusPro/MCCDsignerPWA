@@ -2,12 +2,15 @@ MCCDSigner PWA v0.8.2
 
 Main release.
 
-Changes from v0.8.1:
-- signature section now explicitly confirms when a saved signature has been restored
-- explains that the browser's “No file chosen” text refers only to choosing a replacement file in the current session
-- no signing, detector or profile-persistence behaviour changed
+Profile restoration / readiness fix:
+- published the v0.8.2 workflow, startup and workflow-style assets referenced by the main page
+- saved clinician profile now restores on page load
+- prominent Signer profile banner confirms when name, qualifications, GMC number, signature and filename initials are ready
+- incomplete profiles are visibly flagged before an MCCD is opened
+- on Android the larger desktop workflow-management card stays hidden; profile restoration still runs
+- no detector, orientation, box-placement or PDF-signing logic changed
 
-v0.8.1 profile persistence retained:
+Profile persistence:
 - clinician profile stored in private local JSON (OPFS) where supported
 - transparent PNG signature embedded in that JSON
 - IndexedDB fallback/backup
