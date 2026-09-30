@@ -4,6 +4,7 @@
 var VERSION="0.8.0";
 var DB_NAME="mccdsigner-local-v1";
 var STORE="kv";
+var PROFILE_FILE="mccdsigner-profile.json";
 var state={folders:{incoming:null,signed:null,archive:null},source:null,files:[],db:null,fileInitials:""};
 
 function byId(id){return document.getElementById(id);}
@@ -88,6 +89,77 @@ function base64ToBytes(value){
   for(var i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i)&255;
   return bytes;
 }
+async function requestPersistentStorage(){
+  try{
+    if(navigator.storage&&typeof navigator.storage.persist==="function"){
+      return await navigator.storage.persist();
+    }
+  }catch(e){}
+  return false;
+}
+async function writeProfileFile(profile){
+  if(!(navigator.storage&&typeof navigator.storage.getDirectory==="function"))return false;
+  var root=await navigator.storage.getDirectory();
+  var handle=await root.getFileHandle(PROFILE_FILE,{create:true});
+  var writable=await handle.createWritable();
+  try{
+    await writable.write(JSON.stringify(profile,null,2));
+  }finally{
+    await writable.close();
+  }
+  return true;
+}
+async function readProfileFile(){
+  if(!(navigator.storage&&typeof navigator.storage.getDirectory==="function"))return null;
+  try{
+    var root=await navigator.storage.getDirectory();
+    var handle=await root.getFileHandle(PROFILE_FILE);
+    var file=await handle.getFile();
+    var text=(await file.text()).replace(/^\uFEFF/,"");
+    return JSON.parse(text);
+  }catch(e){
+    if(e&&e.name==="NotFoundError")return null;
+    throw e;
+  }
+}
+async function deleteProfileFile(){
+  if(!(navigator.storage&&typeof navigator.storage.getDirectory==="function"))return;
+  try{
+    var root=await navigator.storage.getDirectory();
+    await root.removeEntry(PROFILE_FILE);
+  }catch(e){
+    if(!(e&&e.name==="NotFoundError"))throw e;
+  }
+}
+function portableProfileFromApi(p){
+  return {
+    format:"MCCDSigner local profile v2",
+    saved_at:new Date().toISOString(),
+    full_name:p.full_name||"",
+    qualifications:p.qualifications||"",
+    gmc_number:p.gmc_number||"",
+    file_initials:currentInitials(),
+    signature_mime:p.signature_mime||"image/png",
+    signature_data_url:p.signature_bytes?bytesToDataUrl(p.signature_bytes,p.signature_mime||"image/png"):null
+  };
+}
+function appProfileFromPortable(p){
+  var result={
+    full_name:p&&p.full_name||"",
+    qualifications:p&&p.qualifications||"",
+    gmc_number:p&&p.gmc_number||"",
+    signature_mime:p&&p.signature_mime||"image/png",
+    signature_bytes:null
+  };
+  if(p&&p.signature_data_url){
+    var decoded=dataUrlToBytes(p.signature_data_url);
+    result.signature_bytes=decoded.bytes;
+    result.signature_mime=decoded.mime;
+  }else if(p&&p.signature_bytes){
+    result.signature_bytes=new Uint8Array(p.signature_bytes);
+  }
+  return result;
+}
 function pick(obj,keys){
   for(var i=0;i<keys.length;i++){
     var value=obj,parts=keys[i].split(".");
@@ -98,27 +170,73 @@ function pick(obj,keys){
 }
 async function saveProfile(automatic){
   var p=window.__MCCD_APP_API__.getProfile();
-  await setValue("profile",{
+  var initials=currentInitials();
+  var idbProfile={
     full_name:p.full_name,
     qualifications:p.qualifications,
     gmc_number:p.gmc_number,
-    file_initials:currentInitials(),
+    file_initials:initials,
     signature_mime:p.signature_mime,
-    signature_bytes:p.signature_bytes?p.signature_bytes.buffer:null
-  });
-  setStatus("wfProfileStatus",automatic?"Profile saved automatically on this device.":"Profile and signature saved locally in this browser.","ok");
+    signature_bytes:p.signature_bytes?p.signature_bytes.slice().buffer:null
+  };
+  var portable=portableProfileFromApi(p);
+
+  await setValue("profile",idbProfile);
+
+  var jsonSaved=false;
+  try{
+    await requestPersistentStorage();
+    jsonSaved=await writeProfileFile(portable);
+  }catch(e){
+    console.warn("Local profile JSON could not be written; IndexedDB copy remains available.",e);
+  }
+
+  setStatus(
+    "wfProfileStatus",
+    jsonSaved
+      ? (automatic?"Profile auto-saved to local JSON on this device.":"Profile saved to local JSON on this device.")
+      : (automatic?"Profile auto-saved in browser storage.":"Profile saved in browser storage."),
+    "ok"
+  );
 }
 async function restoreProfile(){
-  var p=await getValue("profile");
-  if(!p){setStatus("wfProfileStatus","No saved browser profile yet. Import settings JSON or enter details above.","");return;}
-  await window.__MCCD_APP_API__.setProfile({
-    full_name:p.full_name||"",
-    qualifications:p.qualifications||"",
-    gmc_number:p.gmc_number||"",
-    signature_mime:p.signature_mime||"image/png",
-    signature_bytes:p.signature_bytes?new Uint8Array(p.signature_bytes):null
-  });
-  state.fileInitials=(p.file_initials||deriveInitials(p.full_name||"")).toUpperCase();var fi=byId("wfFileInitials");if(fi)fi.value=state.fileInitials;setStatus("wfProfileStatus","Saved local profile loaded"+(p.full_name?": "+p.full_name:"")+".","ok");
+  var p=null,source="";
+
+  try{
+    p=await readProfileFile();
+    if(p)source="local JSON";
+  }catch(e){
+    console.warn("Local profile JSON could not be read; trying browser backup.",e);
+  }
+
+  if(!p){
+    p=await getValue("profile");
+    if(p)source="browser backup";
+  }
+
+  if(!p){
+    setStatus("wfProfileStatus","No saved local profile found. Enter your details or import settings JSON.","");
+    return;
+  }
+
+  await window.__MCCD_APP_API__.setProfile(appProfileFromPortable(p));
+  state.fileInitials=String(p.file_initials||deriveInitials(p.full_name||"")).toUpperCase().replace(/[^A-Z0-9]/g,"");
+  var fi=byId("wfFileInitials");
+  if(fi)fi.value=state.fileInitials;
+
+  // Migrate an older IndexedDB-only profile into the local JSON file.
+  if(source==="browser backup"){
+    try{
+      var apiProfile=window.__MCCD_APP_API__.getProfile();
+      await requestPersistentStorage();
+      await writeProfileFile(portableProfileFromApi(apiProfile));
+      source="browser backup → local JSON";
+    }catch(e){
+      console.warn("Could not migrate saved profile into local JSON.",e);
+    }
+  }
+
+  setStatus("wfProfileStatus","Saved profile loaded from "+source+(p.full_name?": "+p.full_name:"")+".","ok");
 }
 async function importSettings(file){
   var text=(await file.text()).replace(/^\uFEFF/,"");
@@ -162,21 +280,15 @@ async function importSignature(file){
 }
 async function forgetProfile(){
   await deleteValue("profile");
+  try{await deleteProfileFile();}catch(e){console.warn("Could not remove local profile JSON.",e);}
   await window.__MCCD_APP_API__.setProfile({full_name:"",qualifications:"",gmc_number:""});state.fileInitials="";var fi=byId("wfFileInitials");if(fi)fi.value="";
   await window.__MCCD_APP_API__.loadDummySignature();
   setStatus("wfProfileStatus","Saved local profile removed. Signer details cleared; a signature must be selected before signing.","warning");
 }
 function exportProfile(){
   var p=window.__MCCD_APP_API__.getProfile();
-  var obj={
-    format:"MCCDSigner web settings v1",
-    full_name:p.full_name,
-    qualifications:p.qualifications,
-    gmc_number:p.gmc_number,
-    file_initials:currentInitials(),
-    signature_mime:p.signature_mime,
-    signature_data_url:p.signature_bytes?bytesToDataUrl(p.signature_bytes,p.signature_mime):null
-  };
+  var obj=portableProfileFromApi(p);
+  obj.format="MCCDSigner web settings v2";
   var blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
   var url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download="MCCDSigner_web_settings.json";document.body.append(a);a.click();a.remove();
@@ -327,10 +439,10 @@ function installUi(){
     '<section id="mccdWorkflowCard" class="card mccd-workflow-card">'+
     '<div class="section-heading"><div><span class="step">W</span><h2>Local workflow</h2></div><p>Optional desktop workflow for locally-synced OneDrive folders. No Microsoft cloud API is used.</p></div>'+
     '<div class="wf-columns">'+
-    '<div class="wf-panel"><h3>Clinician settings</h3><p>Your name, qualifications, GMC number, filename initials and signature are stored locally on this device and changes save automatically.</p><div class="wf-initials-row"><label>Filename initials <input id="wfFileInitials" type="text" maxlength="8" autocomplete="off" placeholder="e.g. NF"></label><small>Used in signed filenames, e.g. <code>-NFsigned.pdf</code>. Auto-derived from the clinician name if left blank.</small></div>'+
+    '<div class="wf-panel"><h3>Clinician settings</h3><p>Your name, qualifications, GMC number, filename initials and signature are stored locally on this device. MCCDSigner keeps a private local JSON profile plus a browser-storage backup.</p><div class="wf-initials-row"><label>Filename initials <input id="wfFileInitials" type="text" maxlength="8" autocomplete="off" placeholder="e.g. NF"></label><small>Used in signed filenames, e.g. <code>-NFsigned.pdf</code>. Auto-derived from the clinician name if left blank.</small></div>'+
     '<div class="button-row wrap"><label class="file-button secondary">Load settings JSON<input id="wfSettingsFile" type="file" accept="application/json,.json"></label>'+
     '<label class="file-button secondary">Choose transparent signature PNG<input id="wfSignatureFile" type="file" accept="image/png"></label>'+
-    '<button id="wfSaveProfile" class="secondary compact" type="button">Save current profile</button>'+
+    '<button id="wfSaveProfile" class="secondary compact" type="button">Save profile locally</button>'+
     '<button id="wfExportProfile" class="secondary compact" type="button">Export web settings JSON</button>'+
     '<button id="wfForgetProfile" class="ghost compact" type="button">Forget local profile</button></div>'+
     '<p id="wfProfileStatus" class="help-text">Checking saved profile…</p></div>'+
