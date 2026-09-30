@@ -1,19 +1,15 @@
-MCCDSigner PWA v0.8.1
+MCCDSigner PWA v0.8.2
 
 Main release.
 
-Changes from v0.8.0:
-- clinician profile now persists to a private local JSON file (OPFS) where supported
-- the JSON includes the transparent PNG signature itself
-- IndexedDB remains as a fallback/backup
-- persistent browser storage is requested where supported
-- profile fields auto-save and also save when the app is hidden/closed
-- visible version bump allows users to confirm the updated build is loaded
+Changes from v0.8.1:
+- signature section now explicitly confirms when a saved signature has been restored
+- explains that the browser's “No file chosen” text refers only to choosing a replacement file in the current session
+- no signing, detector or profile-persistence behaviour changed
 
-Existing v0.8 behaviour retained:
-- validated detector/orientation/Medical Examiner box engine
-- desktop Incoming / Signed / Archive workflow
-- Android individual-PDF picker and Share workflow
-- per-user filename initials
-- signed filename format: <original>-<initials>signed.pdf
-- automatic widening of narrow 90°/270° Medical Examiner boxes
+v0.8.1 profile persistence retained:
+- clinician profile stored in private local JSON (OPFS) where supported
+- transparent PNG signature embedded in that JSON
+- IndexedDB fallback/backup
+- persistent storage requested where supported
+- profile auto-save
