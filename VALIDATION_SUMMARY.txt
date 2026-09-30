@@ -1,4 +1,4 @@
-MCCDSigner PWA v0.8.0 validation summary
+MCCDSigner PWA v0.8.1 validation summary
 ==============================================
 
 Detector
@@ -14,6 +14,14 @@ Validated results:
 - Correct page orientation: 20/20
 - Medical Examiner box placement: 20/20
 - Reversed page-order example corrected: 1/1
+
+Profile persistence
+-------------------
+- v0.8.1 stores the clinician profile in a private local JSON file (OPFS) where supported.
+- The transparent PNG signature is embedded in that local JSON.
+- IndexedDB remains as a backup/fallback.
+- Persistent storage is requested where supported.
+- Profile fields auto-save and are also saved when the app is hidden/closed.
 
 Workflow
 --------
