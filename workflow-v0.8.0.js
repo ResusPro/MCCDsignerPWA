@@ -8,6 +8,14 @@ var state={folders:{incoming:null,signed:null,archive:null},source:null,files:[]
 
 function byId(id){return document.getElementById(id);}
 function setStatus(id,text,tone){var el=byId(id);if(!el)return;el.textContent=text||"";el.dataset.tone=tone||"";}
+var profileSaveTimer=null;
+function scheduleProfileSave(){
+  if(profileSaveTimer)clearTimeout(profileSaveTimer);
+  profileSaveTimer=setTimeout(function(){
+    profileSaveTimer=null;
+    saveProfile(true).catch(function(e){setStatus("wfProfileStatus","Could not save profile automatically: "+e.message,"error");});
+  },500);
+}
 function deriveInitials(name){
   var clean=String(name||"").trim().replace(/^(DR|DOCTOR|MR|MRS|MISS|MS|PROF|PROFESSOR)\.?\s+/i,"");
   var parts=clean.split(/\s+/).filter(Boolean);
@@ -88,7 +96,7 @@ function pick(obj,keys){
   }
   return null;
 }
-async function saveProfile(){
+async function saveProfile(automatic){
   var p=window.__MCCD_APP_API__.getProfile();
   await setValue("profile",{
     full_name:p.full_name,
@@ -98,7 +106,7 @@ async function saveProfile(){
     signature_mime:p.signature_mime,
     signature_bytes:p.signature_bytes?p.signature_bytes.buffer:null
   });
-  setStatus("wfProfileStatus","Profile and signature saved locally in this browser.","ok");
+  setStatus("wfProfileStatus",automatic?"Profile saved automatically on this device.":"Profile and signature saved locally in this browser.","ok");
 }
 async function restoreProfile(){
   var p=await getValue("profile");
@@ -319,7 +327,7 @@ function installUi(){
     '<section id="mccdWorkflowCard" class="card mccd-workflow-card">'+
     '<div class="section-heading"><div><span class="step">W</span><h2>Local workflow</h2></div><p>Optional desktop workflow for locally-synced OneDrive folders. No Microsoft cloud API is used.</p></div>'+
     '<div class="wf-columns">'+
-    '<div class="wf-panel"><h3>Clinician settings</h3><p>Loads desktop JSON fields such as <code>full_name</code>, <code>qualifications</code>, <code>gmc_number</code> and compatible aliases.</p><div class="wf-initials-row"><label>Filename initials <input id="wfFileInitials" type="text" maxlength="8" autocomplete="off" placeholder="e.g. NF"></label><small>Used in signed filenames, e.g. <code>-NFsigned.pdf</code>. Auto-derived from the clinician name if left blank.</small></div>'+
+    '<div class="wf-panel"><h3>Clinician settings</h3><p>Your name, qualifications, GMC number, filename initials and signature are stored locally on this device and changes save automatically.</p><div class="wf-initials-row"><label>Filename initials <input id="wfFileInitials" type="text" maxlength="8" autocomplete="off" placeholder="e.g. NF"></label><small>Used in signed filenames, e.g. <code>-NFsigned.pdf</code>. Auto-derived from the clinician name if left blank.</small></div>'+
     '<div class="button-row wrap"><label class="file-button secondary">Load settings JSON<input id="wfSettingsFile" type="file" accept="application/json,.json"></label>'+
     '<label class="file-button secondary">Choose transparent signature PNG<input id="wfSignatureFile" type="file" accept="image/png"></label>'+
     '<button id="wfSaveProfile" class="secondary compact" type="button">Save current profile</button>'+
@@ -339,7 +347,15 @@ function installUi(){
   );
   byId("wfSettingsFile").addEventListener("change",async function(e){var f=e.target.files&&e.target.files[0];if(!f)return;try{await importSettings(f);}catch(err){setStatus("wfProfileStatus","Could not import settings: "+err.message,"error");}e.target.value="";});
   byId("wfSignatureFile").addEventListener("change",async function(e){var f=e.target.files&&e.target.files[0];if(!f)return;try{await importSignature(f);}catch(err){setStatus("wfProfileStatus",err.message,"error");}e.target.value="";});
-  byId("wfFileInitials").addEventListener("input",function(){this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,"");state.fileInitials=this.value;});byId("wfSaveProfile").addEventListener("click",function(){saveProfile().catch(function(e){setStatus("wfProfileStatus",e.message,"error");});});
+  byId("wfFileInitials").addEventListener("input",function(){this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,"");state.fileInitials=this.value;scheduleProfileSave();});
+  ["fullName","qualifications","gmcNumber"].forEach(function(id){
+    var field=byId(id);
+    if(field){
+      field.addEventListener("input",scheduleProfileSave);
+      field.addEventListener("change",scheduleProfileSave);
+    }
+  });
+  byId("wfSaveProfile").addEventListener("click",function(){saveProfile(false).catch(function(e){setStatus("wfProfileStatus",e.message,"error");});});
   byId("wfExportProfile").addEventListener("click",exportProfile);
   byId("wfForgetProfile").addEventListener("click",function(){forgetProfile().catch(function(e){setStatus("wfProfileStatus",e.message,"error");});});
   byId("wfChooseIncoming").addEventListener("click",function(){chooseFolder("incoming").catch(function(e){setStatus("wfFolderStatus",e.message,"error");});});
@@ -373,4 +389,14 @@ window.__MCCD_WORKFLOW_INIT__=function(){
 if(window.__MCCD_APP_API__) {
   queueMicrotask(function(){ window.__MCCD_WORKFLOW_INIT__().catch(function(e){ console.error(e); }); });
 }
+window.addEventListener("pagehide",function(){
+  if(profileSaveTimer){clearTimeout(profileSaveTimer);profileSaveTimer=null;}
+  saveProfile(true).catch(function(){});
+});
+document.addEventListener("visibilitychange",function(){
+  if(document.visibilityState==="hidden"){
+    if(profileSaveTimer){clearTimeout(profileSaveTimer);profileSaveTimer=null;}
+    saveProfile(true).catch(function(){});
+  }
+});
 })();
