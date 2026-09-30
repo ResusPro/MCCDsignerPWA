@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.8.0-main-v3';
+const CACHE_NAME = 'mccdsigner-pwa-v0.8.1-main-v1';
 
 const CORE = [
   './',
@@ -9,11 +9,11 @@ const CORE = [
   './VALIDATION_SUMMARY.txt',
   './THIRD_PARTY_NOTICES.txt',
   './VERSION.txt',
-  './startup-v0.8.0.js',
-  './workflow-v0.8.0.js',
-  './assets/app-v0.8.0.js',
+  './startup-v0.8.1.js',
+  './workflow-v0.8.1.js',
+  './assets/app-v0.8.1.js',
   './assets/app-v0.7.0.css',
-  './assets/workflow-v0.8.0.css',
+  './assets/workflow-v0.8.1.css',
   './assets/pdf.worker.mjs',
   './pdfjs-wasm/jbig2.wasm',
   './pdfjs-wasm/openjpeg.wasm',
@@ -47,7 +47,6 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET') return;
-
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
@@ -55,7 +54,7 @@ self.addEventListener('fetch', (event) => {
     /\/(?:batch-test-v0\.7\.0(?:\.html|\.js|\.css)|processor-v0\.7\.0\.html|batch-bridge-v0\.7\.0(?:-r\d+)?\.js|assets\/app-v0\.7\.0-batch-r\d+\.js|batch-test-v0\.8\.0-rc1(?:\.html|\.js|\.css)|processor-v0\.8\.0-rc1\.html|assets\/app-v0\.8\.0-rc1-batch-r\d+\.js)$/.test(url.pathname);
 
   const isMainRelease =
-    /\/(?:index\.html|startup-v0\.8\.0\.js|workflow-v0\.8\.0\.js|assets\/app-v0\.8\.0\.js|assets\/workflow-v0\.8\.0\.css|manifest\.webmanifest)$/.test(url.pathname);
+    /\/(?:index\.html|startup-v0\.8\.1\.js|workflow-v0\.8\.1\.js|assets\/app-v0\.8\.1\.js|assets\/workflow-v0\.8\.1\.css|manifest\.webmanifest)$/.test(url.pathname);
 
   const networkFirst =
     request.mode === 'navigate'
