@@ -20,3 +20,8 @@ Signing:
 - signed filename format: <original>-<initials>signed.pdf
 - no additional watermark
 - 90°/270° detected Medical Examiner boxes are automatically widened when necessary
+
+Profile persistence:
+- clinician profile is saved to a private local JSON file (OPFS) where supported
+- IndexedDB remains as a fallback/backup
+- persistent storage is requested where supported
