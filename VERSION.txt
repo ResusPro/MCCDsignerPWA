@@ -1,18 +1,11 @@
-MCCDSigner PWA v0.8.2
+MCCDSigner PWA v0.8.3
 
-Main release.
-
-Profile restoration / readiness fix:
-- published the v0.8.2 workflow, startup and workflow-style assets referenced by the main page
-- saved clinician profile now restores on page load
-- prominent Signer profile banner confirms when name, qualifications, GMC number, signature and filename initials are ready
-- incomplete profiles are visibly flagged before an MCCD is opened
-- on Android the larger desktop workflow-management card stays hidden; profile restoration still runs
-- no detector, orientation, box-placement or PDF-signing logic changed
-
-Profile persistence:
-- clinician profile stored in private local JSON (OPFS) where supported
-- transparent PNG signature embedded in that JSON
-- IndexedDB fallback/backup
-- persistent storage requested where supported
-- profile auto-save
+Android profile persistence fix:
+- Never save blank startup fields before profile restoration completes.
+- Immediate local backup of clinician details and embedded PNG signature.
+- Independent IndexedDB and local JSON writes, serialized to preserve order.
+- Restore newest available saved copy; tolerate unavailable storage backends.
+- Initialize signature before restoration, independently of offline cache startup.
+- Save signature after decoding completes, without fixed timing assumptions.
+- Android signer card now shows save, export and recovery controls.
+- No detector, orientation, box-placement or PDF-signing logic changed.
