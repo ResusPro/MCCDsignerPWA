@@ -40,3 +40,9 @@ Safety behaviour
 - Desktop workflow writes and SHA-256 verifies the signed PDF and archived original before removing the original from Incoming.
 - Every generated PDF is shown for visual review before approval.
 - No patient PDFs are included in this public repository.
+
+v0.8.4 deskew validation:
+- 15 regression checks passed: profile persistence, both signs of scan skew, straight/blank pages, page-corner containment and unchanged archival source bytes.
+- Supplied two-page scanned PDF: page 2 measured -1.30 degrees; corrected rendering measured 0.00 degrees. Page 1 retained without correction.
+- Core box detector confirmed the Medical Examiner box after normalization. Native Tesseract used as the OCR test adapter; physical Android browser verification remains user-side.
+- Rendered placement preview and test-stamped final PDF inspected: printed borders and test stamp aligned, with no page-edge clipping.

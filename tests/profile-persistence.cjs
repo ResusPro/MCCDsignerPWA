@@ -2,7 +2,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
-const source=fs.readFileSync('workflow-v0.8.3.js','utf8');
+const source=fs.readFileSync('workflow-v0.8.4.js','utf8');
 function harness({backup=null,idb=null,file=null,failIdb=false,delayFile=0}={}){
  const local=new Map(),writes=[],events={},fields={};
  if(backup)local.set('mccdsigner-profile-backup-v2',JSON.stringify(backup));

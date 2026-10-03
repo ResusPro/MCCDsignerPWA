@@ -1,11 +1,11 @@
-MCCDSigner PWA v0.8.3
+MCCDSigner PWA v0.8.4
 
-Android profile persistence fix:
-- Never save blank startup fields before profile restoration completes.
-- Immediate local backup of clinician details and embedded PNG signature.
-- Independent IndexedDB and local JSON writes, serialized to preserve order.
-- Restore newest available saved copy; tolerate unavailable storage backends.
-- Initialize signature before restoration, independently of offline cache startup.
-- Save signature after decoding completes, without fixed timing assumptions.
-- Android signer card now shows save, export and recovery controls.
-- No detector, orientation, box-placement or PDF-signing logic changed.
+Automatic scan deskew:
+- Measure printed form border angles before box detection.
+- Correct confidently detected scan skew up to 5 degrees.
+- Straighten the source PDF using embedded page content, preserving scan quality.
+- Fit the transformed page within its existing size to avoid clipping.
+- Detection, placement preview and final signing use the same corrected PDF.
+- Document plan reports each page's deskew correction.
+- Folder workflow archives the unchanged original source bytes.
+- Retains v0.8.3 Android profile persistence fixes.
