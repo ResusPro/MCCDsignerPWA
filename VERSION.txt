@@ -1,14 +1,5 @@
-MCCDSigner PWA v0.8.5
+MCCDSigner PWA v0.8.6
 
-Edge compatibility candidate:
-- Edge uses a direct same-origin OCR worker, without a generated blob worker URL.
-- Edge avoids optional OCR IndexedDB language cache; service worker remains responsible for offline assets.
-- Edge OCR startup allowance 120 seconds and recognition allowance 90 seconds.
-- Edge OCR render longest edge reduced from 1150 to 950 pixels.
-- Other browsers retain their 1150 pixel OCR render, 30 second deadlines and existing worker/cache settings.
-- WebAssembly preflight with actionable failure messages.
-- Dispose failed/timed-out workers, including initialization resolving after timeout.
-- Check browser runs a synthetic OCR test without a certificate.
-- Use manual placement cancels automatic detection and unlocks review generation.
-- Retains Android profile persistence and scan deskew.
-- Root cause on managed Trust Edge remains unconfirmed pending on-device test.
+Fix PDF cleanup during deskew: destroy the PDF loading task rather than calling the removed document-proxy destroy method.
+Retains v0.8.5 Edge OCR settings, Android profile persistence and automatic scan deskew.
+Managed Trust Edge OCR still requires on-device verification.

@@ -51,3 +51,8 @@ v0.8.5 Edge compatibility candidate:
 - 21 regression checks pass, including WebAssembly rejection, worker loading failure, disposal after timeout and manual cancellation.
 - Same supplied scan confirms the Medical Examiner border at both the existing 1150 pixel render and the Edge-specific 950 pixel render, using native OCR as the test adapter.
 - Browser OCR self-test and actual managed Trust Edge behavior require on-device validation. Root cause not yet confirmed.
+
+v0.8.6 document loading fix:
+- 25 regression checks pass. New loader checks cover corrected and straight PDFs, failed deskew cleanup preserving the underlying error, and superseded loads.
+- Bundled PDF document proxy exposes loadingTask.destroy(), not destroy(). Deskew cleanup now uses the loading task.
+- Physical managed Trust Edge verification remains outstanding.

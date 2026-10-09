@@ -1,5 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict');
-const deskew=require('../deskew-v0.8.5.js');
+const deskew=require('../deskew-v0.8.6.js');
 function form(angle,blank=false){
  const width=800,height=1000,data=new Uint8ClampedArray(width*height*4).fill(255),a=angle*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
  if(blank)return {width,height,data};
@@ -26,10 +26,10 @@ test('deskew transform contains every corner, across portrait and landscape page
 });
 test('folder archiving uses unchanged source bytes after deskew normalization',()=>{
  const fs=require('node:fs'),vm=require('node:vm');
- const s=fs.readFileSync('assets/app-v0.8.5.js','utf8');
+ const s=fs.readFileSync('assets/app-v0.8.6.js','utf8');
  const api=s.slice(s.indexOf(';window.__MCCD_APP_API__='));
  const original=new Uint8Array([1,2,3]),normalized=new Uint8Array([4,5,6]);
- const sandbox={window:{},Q:{sourceOriginalBytes:original,originalBytes:normalized,sourceName:'test.pdf'},Bm:'0.8.5'};
+ const sandbox={window:{},Q:{sourceOriginalBytes:original,originalBytes:normalized,sourceName:'test.pdf'},Bm:'0.8.6'};
  vm.runInNewContext(api,sandbox);
  assert.deepEqual([...sandbox.window.__MCCD_APP_API__.getDocument().originalBytes],[1,2,3]);
 });
