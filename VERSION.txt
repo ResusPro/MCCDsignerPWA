@@ -1,11 +1,14 @@
-MCCDSigner PWA v0.8.4
+MCCDSigner PWA v0.8.5
 
-Automatic scan deskew:
-- Measure printed form border angles before box detection.
-- Correct confidently detected scan skew up to 5 degrees.
-- Straighten the source PDF using embedded page content, preserving scan quality.
-- Fit the transformed page within its existing size to avoid clipping.
-- Detection, placement preview and final signing use the same corrected PDF.
-- Document plan reports each page's deskew correction.
-- Folder workflow archives the unchanged original source bytes.
-- Retains v0.8.3 Android profile persistence fixes.
+Edge compatibility candidate:
+- Edge uses a direct same-origin OCR worker, without a generated blob worker URL.
+- Edge avoids optional OCR IndexedDB language cache; service worker remains responsible for offline assets.
+- Edge OCR startup allowance 120 seconds and recognition allowance 90 seconds.
+- Edge OCR render longest edge reduced from 1150 to 950 pixels.
+- Other browsers retain their 1150 pixel OCR render, 30 second deadlines and existing worker/cache settings.
+- WebAssembly preflight with actionable failure messages.
+- Dispose failed/timed-out workers, including initialization resolving after timeout.
+- Check browser runs a synthetic OCR test without a certificate.
+- Use manual placement cancels automatic detection and unlocks review generation.
+- Retains Android profile persistence and scan deskew.
+- Root cause on managed Trust Edge remains unconfirmed pending on-device test.

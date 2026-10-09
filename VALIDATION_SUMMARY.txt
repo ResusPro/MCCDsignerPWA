@@ -46,3 +46,8 @@ v0.8.4 deskew validation:
 - Supplied two-page scanned PDF: page 2 measured -1.30 degrees; corrected rendering measured 0.00 degrees. Page 1 retained without correction.
 - Core box detector confirmed the Medical Examiner box after normalization. Native Tesseract used as the OCR test adapter; physical Android browser verification remains user-side.
 - Rendered placement preview and test-stamped final PDF inspected: printed borders and test stamp aligned, with no page-edge clipping.
+
+v0.8.5 Edge compatibility candidate:
+- 21 regression checks pass, including WebAssembly rejection, worker loading failure, disposal after timeout and manual cancellation.
+- Same supplied scan confirms the Medical Examiner border at both the existing 1150 pixel render and the Edge-specific 950 pixel render, using native OCR as the test adapter.
+- Browser OCR self-test and actual managed Trust Edge behavior require on-device validation. Root cause not yet confirmed.
