@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.8.6-main-v2';
+const CACHE_NAME = 'mccdsigner-pwa-v0.8.7-main-v1';
 
 const CORE = [
   './',
@@ -9,11 +9,11 @@ const CORE = [
   './VALIDATION_SUMMARY.txt',
   './THIRD_PARTY_NOTICES.txt',
   './VERSION.txt',
-  './startup-v0.8.6.js',
+  './startup-v0.8.7.js',
   './deskew-v0.8.6.js',
   './browser-compat-v0.8.6.js',
-  './workflow-v0.8.6.js',
-  './assets/app-v0.8.6.js',
+  './workflow-v0.8.7.js',
+  './assets/app-v0.8.7.js',
   './assets/app-v0.7.0.css',
   './assets/workflow-v0.8.6.css',
   './assets/pdf.worker.mjs',
