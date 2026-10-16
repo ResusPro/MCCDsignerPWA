@@ -1,5 +1,7 @@
-MCCDSigner PWA v0.8.6
+MCCDSigner PWA v0.8.7
 
-Fix PDF cleanup during deskew: destroy the PDF loading task rather than calling the removed document-proxy destroy method.
-Retains v0.8.5 Edge OCR settings, Android profile persistence and automatic scan deskew.
-Managed Trust Edge OCR still requires on-device verification.
+Workflow update:
+- Incoming MCCD queue is now ordered oldest first, so the longest-waiting document appears at the top.
+- Queue status text now explicitly says "oldest first".
+
+Retains the tested v0.8.6 detector, Edge compatibility handling, Android profile persistence and automatic deskew.
