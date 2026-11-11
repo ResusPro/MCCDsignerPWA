@@ -1,16 +1,10 @@
-MCCDSigner PWA v0.8.8
+MCCDSigner PWA v0.8.9
 
 Workflow UI update:
-- When signer profile and OneDrive folders are configured, the large settings panels collapse automatically.
-- Compact readiness summary explicitly identifies the currently loaded signer and GMC number.
-- Summary confirms signature, filename initials and three OneDrive folders.
-- A Settings button re-opens the full controls at any time.
-- If signer details or folder setup are incomplete, settings remain expanded automatically with the omission shown.
-- Incoming MCCD queue remains visible and oldest-first.
+- A complete signer profile now collapses to the green "Ready to sign as…" banner.
+- The banner explicitly identifies the loaded signer and retains qualifications, GMC/signature confirmation and filename initials.
+- "Change signer details" expands the full signer fields and signature controls.
+- If any signer detail becomes missing or invalid, the full signer section expands automatically.
+- The v0.8.8 compact local-workflow summary and oldest-first Incoming queue remain unchanged.
 
-User separation:
-- Browser security does not expose the Windows username to MCCDSigner.
-- Saved signer details are stored in the current browser/Windows profile, so separate Windows/Edge profiles normally have separate saved signer settings.
-- The explicit current-signer summary is retained as the safety check for shared browser profiles.
-
-Retains the tested v0.8.7 signing, detector, Edge compatibility, Android profile persistence and deskew behaviour.
+No detector, signing-coordinate, Edge compatibility, Android persistence or deskew logic changed.
