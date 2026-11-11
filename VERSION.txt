@@ -1,7 +1,16 @@
-MCCDSigner PWA v0.8.7
+MCCDSigner PWA v0.8.8
 
-Workflow update:
-- Incoming MCCD queue is now ordered oldest first, so the longest-waiting document appears at the top.
-- Queue status text now explicitly says "oldest first".
+Workflow UI update:
+- When signer profile and OneDrive folders are configured, the large settings panels collapse automatically.
+- Compact readiness summary explicitly identifies the currently loaded signer and GMC number.
+- Summary confirms signature, filename initials and three OneDrive folders.
+- A Settings button re-opens the full controls at any time.
+- If signer details or folder setup are incomplete, settings remain expanded automatically with the omission shown.
+- Incoming MCCD queue remains visible and oldest-first.
 
-Retains the tested v0.8.6 detector, Edge compatibility handling, Android profile persistence and automatic deskew.
+User separation:
+- Browser security does not expose the Windows username to MCCDSigner.
+- Saved signer details are stored in the current browser/Windows profile, so separate Windows/Edge profiles normally have separate saved signer settings.
+- The explicit current-signer summary is retained as the safety check for shared browser profiles.
+
+Retains the tested v0.8.7 signing, detector, Edge compatibility, Android profile persistence and deskew behaviour.
