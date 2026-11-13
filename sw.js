@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mccdsigner-pwa-v0.8.9-main-v2';
+const CACHE_NAME = 'mccdsigner-pwa-v0.8.9-main-v3';
 
 const CORE = [
   './',
@@ -14,6 +14,7 @@ const CORE = [
   './browser-compat-v0.8.6.js',
   './workflow-v0.8.9.js',
   './me-shortcuts-v0.8.9.js',
+  './ME_Spreadsheet_Links.txt',
   './assets/app-v0.8.9.js',
   './assets/app-v0.7.0.css',
   './assets/workflow-v0.8.9.css',
@@ -64,6 +65,8 @@ self.addEventListener('fetch', (event) => {
     request.mode === 'navigate'
     || url.pathname.endsWith('/index.html')
     || url.pathname.endsWith('/VERSION.txt')
+    || url.pathname.endsWith('/ME_Spreadsheet_Links.txt')
+    || url.pathname.endsWith('/me-shortcuts-v0.8.9.js')
     || isRegressionHarness
     || isMainRelease;
 
