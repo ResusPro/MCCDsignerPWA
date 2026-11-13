@@ -1,0 +1,72 @@
+/* Bottom-of-page ME spreadsheet shortcuts; deliberately separate from signing workflow. */
+footer#me-spreadsheet-shortcuts {
+  display: block;
+  width: min(1100px, calc(100% - 24px));
+  margin: 0 auto 28px;
+  font-size: .92rem;
+}
+#me-spreadsheet-shortcuts .me-links-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 14px 18px;
+}
+#me-spreadsheet-shortcuts .me-links-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+#me-spreadsheet-shortcuts h2 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 1.04rem;
+}
+#me-spreadsheet-shortcuts nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 12px;
+}
+#me-spreadsheet-shortcuts nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid #c6d6e8;
+  border-radius: 10px;
+  background: #e5edf7;
+  color: var(--navy);
+  text-decoration: none;
+  font-weight: 750;
+}
+#me-spreadsheet-shortcuts nav a:hover:not([aria-disabled]) {
+  background: #d4e5f8;
+  text-decoration: underline;
+}
+#me-spreadsheet-shortcuts nav a[aria-disabled="true"] {
+  color: #778498;
+  background: #f1f3f6;
+  cursor: not-allowed;
+}
+#me-spreadsheet-shortcuts button {
+  min-height: 36px;
+  padding: 7px 11px;
+  font-size: .85rem;
+}
+#me-spreadsheet-shortcuts .me-links-status {
+  margin: 10px 0 0;
+  font-size: .84rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+#me-spreadsheet-shortcuts .me-links-status[data-tone="error"] {
+  color: var(--red);
+}
+#me-spreadsheet-shortcuts input[type="file"] {
+  display: none !important;
+}
