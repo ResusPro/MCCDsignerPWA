@@ -1,9 +1,12 @@
-/* MCCDSigner ME spreadsheet shortcuts. The NHS URLs stay in browser-local storage, not public source. */
+/* MCCDSigner: ME spreadsheet shortcuts use the centrally hosted quarterly links file. */
 (() => {
   'use strict';
+
+  // This same filename is used by the existing ME desktop startup script.
+  // Its line order is Community, RBH, PGH; display order is Community, PGH, RBH.
+  const FILE = './ME_Spreadsheet_Links.txt';
   const STORAGE_KEY = 'mccdsigner.me-spreadsheet-links.v1';
-  // The existing ME_Spreadsheet_Links.txt is ordered Community, RBH, PGH.
-  const shortcuts = [
+  const buttons = [
     { id: 'community', line: 0 },
     { id: 'pgh', line: 2 },
     { id: 'rbh', line: 1 }
@@ -11,26 +14,26 @@
 
   function validate(lines) {
     if (!Array.isArray(lines) || lines.length !== 3) {
-      throw new Error('The text file must contain exactly three non-empty URLs.');
+      throw new Error('Expected exactly three SharePoint links.');
     }
     const urls = lines.map((line) => {
       const value = String(line).trim();
       let parsed;
       try { parsed = new URL(value); }
-      catch (_) { throw new Error('One of the three lines is not a valid URL.'); }
+      catch (_) { throw new Error('One SharePoint URL is invalid.'); }
       if (parsed.protocol !== 'https:' || parsed.hostname.toLowerCase() !== 'nhs.sharepoint.com') {
-        throw new Error('All three links must be NHS SharePoint HTTPS URLs.');
+        throw new Error('Unexpected spreadsheet host.');
       }
       return parsed.href;
     });
     if (new Set(urls).size !== 3) {
-      throw new Error('The file contains duplicate URLs.');
+      throw new Error('Duplicate SharePoint links.');
     }
     return urls;
   }
 
   function render(urls) {
-    for (const { id, line } of shortcuts) {
+    for (const { id, line } of buttons) {
       const anchor = document.getElementById('me-sheet-' + id);
       if (!anchor) continue;
       if (urls) {
@@ -43,59 +46,50 @@
         anchor.removeAttribute('href');
         anchor.removeAttribute('target');
         anchor.setAttribute('aria-disabled', 'true');
-        anchor.title = 'Load ME_Spreadsheet_Links.txt first';
+        anchor.title = 'Spreadsheet links are unavailable';
       }
     }
   }
 
-  function status(message, error) {
+  function status(message, tone) {
     const el = document.getElementById('me-sheet-status');
     if (!el) return;
-    el.textContent = message;
-    el.dataset.tone = error ? 'error' : 'ok';
+    el.textContent = message || '';
+    el.dataset.tone = tone || '';
+    el.hidden = !message;
   }
 
-  function init() {
-    const choose = document.getElementById('me-sheet-import');
-    const picker = document.getElementById('me-sheet-file');
-    if (!choose || !picker) return;
+  async function init() {
+    if (!document.getElementById('me-sheet-community')) return;
 
-    let saved = null;
+    let previous = null;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) saved = validate(JSON.parse(raw));
-    } catch (_) {
-      saved = null;
-    }
-    render(saved);
-    status(saved
-      ? 'Links ready in this browser. Reload the text file after each quarterly spreadsheet refresh.'
-      : 'Choose the same ME_Spreadsheet_Links.txt used by MEstartup.bat to activate these links.', false);
+      const old = localStorage.getItem(STORAGE_KEY);
+      if (old) previous = validate(JSON.parse(old));
+    } catch (_) { /* Browsers may block local storage; online loading still works. */ }
 
-    choose.addEventListener('click', () => picker.click());
-    picker.addEventListener('change', async () => {
-      const file = picker.files && picker.files[0];
-      if (!file) return;
-      try {
-        if (file.size > 100000) throw new Error('The selected text file is unexpectedly large.');
-        const content = await file.text();
-        const lines = content.replace(/^\uFEFF/, '').split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-        const urls = validate(lines);
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(urls));
-        } catch (_) {
-          render(urls);
-          status('Links are ready now, but this browser could not remember them. Re-import after reopening.', true);
-          return;
-        }
-        render(urls);
-        status('Community, PGH and RBH links ready. Updated links saved in this browser.', false);
-      } catch (e) {
-        status('Links not changed: ' + (e && e.message ? e.message : 'Could not read that file.'), true);
-      } finally {
-        picker.value = '';
+    // Previously saved URLs work immediately, then are replaced from the canonical file.
+    render(previous);
+    status(previous ? '' : 'Loading current ME spreadsheet links…', '');
+
+    try {
+      const response = await fetch(FILE, { cache: 'no-store' });
+      if (!response.ok) throw new Error('Unable to retrieve spreadsheet link list.');
+      const text = await response.text();
+      const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+      const urls = validate(lines);
+      render(urls);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(urls)); }
+      catch (_) { /* Link configuration still works for this session. */ }
+      status('', '');
+    } catch (_) {
+      if (previous) {
+        status('Could not check for updated links; using last saved shortcuts.', 'warning');
+      } else {
+        render(null);
+        status('Spreadsheet links are temporarily unavailable. Please reload the page.', 'error');
       }
-    });
+    }
   }
 
   if (document.readyState === 'loading') {
