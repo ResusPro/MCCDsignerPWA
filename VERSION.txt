@@ -9,8 +9,9 @@ Workflow UI update:
 
 No detector, signing-coordinate, Edge compatibility, Android persistence or deskew logic changed.
 
-ME spreadsheet shortcuts patch (13 November 2026):
-- Bottom-of-page Community, PGH and RBH links (the source TXT is ordered Community, RBH, PGH).
-- Import ME_Spreadsheet_Links.txt once per browser to enable the three links; re-import after quarterly refresh.
-- SharePoint document URLs are stored in browser-local storage and are not published in this repository.
-- Signing and document-handling logic remains v0.8.9, unchanged.
+ME spreadsheet shortcuts (revised 13 November 2026):
+- Community, PGH and RBH open the corresponding NHS SharePoint spreadsheets in new tabs.
+- No import or extra setup. PWA loads the central ME_Spreadsheet_Links.txt automatically on each page opening, with network-first service-worker handling and local fallback.
+- Source file order: Community, RBH, PGH. Display order: Community, PGH, RBH.
+- When the hosted links file is replaced at a quarterly refresh, the PWA uses those links automatically; changes to a PC-only copy do not propagate.
+- Signing logic and core document workflow remain unchanged at v0.8.9.
