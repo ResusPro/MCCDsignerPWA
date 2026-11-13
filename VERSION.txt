@@ -8,3 +8,9 @@ Workflow UI update:
 - The v0.8.8 compact local-workflow summary and oldest-first Incoming queue remain unchanged.
 
 No detector, signing-coordinate, Edge compatibility, Android persistence or deskew logic changed.
+
+ME spreadsheet shortcuts patch (13 November 2026):
+- Bottom-of-page Community, PGH and RBH links (the source TXT is ordered Community, RBH, PGH).
+- Import ME_Spreadsheet_Links.txt once per browser to enable the three links; re-import after quarterly refresh.
+- SharePoint document URLs are stored in browser-local storage and are not published in this repository.
+- Signing and document-handling logic remains v0.8.9, unchanged.
